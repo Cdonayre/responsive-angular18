@@ -1,0 +1,86 @@
+<div class="flex justify-end mt-4 mr-4">
+  <button mat-flat-button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="openDialog(establecimiento)">
+    Añadir
+  </button>
+</div>
+
+<div class="mt-4 mx-4">
+  <div class="w-full overflow-hidden rounded-lg shadow-xs">
+    <div class="w-full overflow-x-auto">
+      <table mat-table [dataSource]="establecimientoDataSource" class="w-full">
+        <thead class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+          <ng-container matColumnDef="codigo">
+            <th class="p-4" mat-header-cell *matHeaderCellDef> Codigo </th>
+            <td class="px-4 py-3" mat-cell *matCellDef="let element">
+              <p class="font-semibold">{{element.codigo}}</p>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="nombre">
+            <th class="p-4" mat-header-cell *matHeaderCellDef> Nombre </th>
+            <td class="px-4 py-3" mat-cell *matCellDef="let element">
+              <p class="font-semibold">{{element.nombre}}</p>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th class="p-4" mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td class="px-4 py-3" mat-cell *matCellDef="let element">
+              <button mat-flat-button color="primary" class="mr-2" (click)="openDialog(element)">Editar</button>
+              <button mat-flat-button color="warn" (click)="eliminarEstablecimiento(element)">Eliminar</button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        </thead>
+        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+          <tr mat-row class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-400 text-gray-700 dark:text-gray-400" *matRowDef="let row; columns: displayedColumns;"></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="flex justify-center mt-4">
+  <mat-paginator [pageSizeOptions]="[7, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+  </mat-paginator>
+</div>
+
+
+
+  <!-- <div class="flex justify-end mt-4 mr-4">  
+    <button mat-flat-button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="openDialog(establecimiento)">añadir</button>
+    <br>
+    </div>
+    <div class="overflow-x-auto">
+        <table mat-table [dataSource]="establecimientoDataSource" class="mat-elevation-z8 table-fixed border-collapse border border-slate-600 text-center text-wrap w-full">
+          <thead class="bg-blue-950 text-white">
+            <ng-container matColumnDef="codigo">
+              <th class="border border-slate-600 md:w-1/4 lg:w-1/6 xl:w-1/8 px-2 py-3" mat-header-cell *matHeaderCellDef> Codigo </th>
+              <td class="border-b border-slate-600 text-xs px-2 py-2" mat-cell *matCellDef="let element"> {{element.codigo}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="nombre">
+              <th class="border border-slate-600 md:w-1/4 lg:w-1/6 xl:w-1/8 px-2 py-3" mat-header-cell *matHeaderCellDef> Nombre </th>
+              <td class="border-b border-slate-600 text-xs px-2 py-2" mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="actions">
+              <th class="border border-slate-600 px-2 py-3" mat-header-cell *matHeaderCellDef> Acciones </th>
+              <td class="border-b border-slate-600 text-xs px-2 py-2" mat-cell *matCellDef="let element">
+                <button mat-flat-button color="primary" class="mr-2" (click)="openDialog(element)">Editar</button>
+                <button mat-flat-button color="warn" (click)="eliminarEstablecimiento(element.id)">Eliminar</button>
+              </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </thead>
+        </table>
+      </div>
+      <div class="flex justify-center mt-4">
+          <mat-paginator [pageSizeOptions]="[7, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements">
+          </mat-paginator>
+      </div>   -->

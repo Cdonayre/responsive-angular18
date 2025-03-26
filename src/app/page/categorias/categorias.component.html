@@ -1,0 +1,35 @@
+
+<!-- Client Table -->
+<div class="mt-4 mx-4">
+    <div class="w-full overflow-hidden rounded-lg shadow-xs">
+      <div class="w-full overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+              <th class="p-4 w-1/4">ID</th>
+              <th class="p-4 w-1/4">RIS</th>
+              <th class="p-4 w-1/4">Fecha creación</th>
+              <th class="p-4 w-1/4">Fecha actualización</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+            @for(categoria of categorias; track $index){
+            <tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
+              <td class="px-4 py-3">
+                    <p class="font-semibold">{{categoria.id}}</p>
+              </td>
+              <td class="px-4 py-3">
+                <p class="font-semibold">{{categoria.nombre}}</p>
+              </td>
+              <td class="px-4 py-3">
+                <p class="font-semibold">{{categoria.created_at}}</p>
+             </td>
+            <td class="px-4 py-3">
+                <p class="font-semibold">{{categoria.updated_at}}</p>
+            </td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+      

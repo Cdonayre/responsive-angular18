@@ -1,0 +1,30 @@
+.form-container {
+    width: 350px;
+    text-align: center;
+  }
+  
+  .close-button {
+    float: right;
+    margin: 15px;
+  }
+  
+  .close-icon {
+    color: red;
+  }
+  
+  .form-input {
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .form-field {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+  
