@@ -9,10 +9,24 @@
     <div class="w-full overflow-x-auto">
       <table mat-table [dataSource]="establecimientoDataSource" class="w-full">
         <thead class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+          <ng-container matColumnDef="numero">
+            <th class="p-4" mat-header-cell *matHeaderCellDef> N° </th>
+            <td class="px-4 py-3" mat-cell *matCellDef="let element">
+              <p class="font-semibold">{{element.id}}</p>
+            </td>
+          </ng-container>
+          
           <ng-container matColumnDef="codigo">
             <th class="p-4" mat-header-cell *matHeaderCellDef> Codigo </th>
             <td class="px-4 py-3" mat-cell *matCellDef="let element">
               <p class="font-semibold">{{element.codigo}}</p>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="risNombre">
+            <th class="p-4" mat-header-cell *matHeaderCellDef> RIS </th>
+            <td class="px-4 py-3" mat-cell *matCellDef="let element">
+              <p class="font-semibold">{{element.risNombre}}</p>
             </td>
           </ng-container>
 

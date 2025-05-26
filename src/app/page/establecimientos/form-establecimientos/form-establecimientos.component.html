@@ -1,39 +1,54 @@
 <div class="container form-container">
-    <div> 
-        <button mat-icon-button class="close-button" aria-label="Close form">
-            <mat-icon class="close-icon">close</mat-icon>
+    <div mat-dialog-actions> 
+        <button mat-icon-button class="close-button" aria-label="Close form" (click)="closeDialog()">
+            <mat-icon class="close-icon" >close</mat-icon>
         </button>
     </div>
     <div mat-dialog-title>Formulario</div>
     <div mat-dialog-content>
         <mat-form-field >
             <mat-label>Departamento ID</mat-label>
-            <input matInput placeholder="Id" [(ngModel)]="establecimientoData.departamento_id" class="form-input">
             <mat-icon fontIcon="person" matSuffix></mat-icon>
+            <mat-select placeholder="Departamento" [(ngModel)]="establecimientoData.departamento_id" class="form-input">
+           <!-- <input matInput placeholder="Id" [(ngModel)]="establecimientoData.departamento_id" class="form-input"> -->         
+                   <mat-option value="1">Lima</mat-option>
+            </mat-select>
         </mat-form-field>
         <br>
         <mat-form-field >
             <mat-label>Provincia ID</mat-label>
-            <input matInput placeholder="Id" [(ngModel)]="establecimientoData.provincia_id" class="form-input">
             <mat-icon fontIcon="person" matSuffix></mat-icon>
+            <mat-select  placeholder="Id" [(ngModel)]="establecimientoData.provincia_id" class="form-input">
+            <mat-option value="1">Lima  </mat-option>
+            </mat-select>
         </mat-form-field>
         <br>
         <mat-form-field >
             <mat-label>Distrito ID</mat-label>
-            <input matInput placeholder="Id" [(ngModel)]="establecimientoData.distrito_id" class="form-input">
             <mat-icon fontIcon="person" matSuffix></mat-icon>
+            <mat-select placeholder="Id" [(ngModel)]="establecimientoData.distrito_id" class="form-input">
+            <mat-option *ngFor="let distrito of distritos" [value]="distrito.id">{{distrito.nombre}}</mat-option>
+            </mat-select>
         </mat-form-field>
         <br>
         <mat-form-field >
             <mat-label>RIS ID</mat-label>
-            <input matInput placeholder="Id" [(ngModel)]="establecimientoData.ris_id" class="form-input">
             <mat-icon fontIcon="person" matSuffix></mat-icon>
+            <mat-select placeholder="Id" [(ngModel)]="establecimientoData.ris_id" class="form-input">
+            <mat-option *ngFor="let ris of ris"[value]="ris.id">{{ris.nombre}}</mat-option>
+            </mat-select>
         </mat-form-field>
         <br>
         <mat-form-field >
             <mat-label>Categoría ID</mat-label>
-            <input matInput placeholder="Id" [(ngModel)]="establecimientoData.categoria_id" class="form-input">
             <mat-icon fontIcon="person" matSuffix></mat-icon>
+            <mat-select placeholder="Id" [(ngModel)]="establecimientoData.categoria_id" class="form-input">
+            <mat-option *ngFor="let categoria of categorias" [value]="categoria.id">
+                @if(categoria.id != 1){
+                    {{categoria.nombre}}
+                }
+            </mat-option>   
+            </mat-select>
         </mat-form-field>
         <br>
         <mat-form-field >
@@ -53,5 +68,4 @@
         <br>
         <button mat-flat-button mat-dialog-close="establecimientoData" class="rounded-full py-2 px-4 bg-red-600 hover:bg-red-400">cancelar</button>
     </div>
-
 </div>

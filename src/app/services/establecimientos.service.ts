@@ -10,7 +10,7 @@ export class EstablecimientosService {
 
   constructor() { }
   private http =  inject(HttpClient);
-  private URLbase = environment.apiURL+'/establecimientos';
+  private URLbase = environment.apiURL+'/Establecimientos';
   establecimientos:EstablecimientosEdit[]=[];
   establecimientosActualizados =  new Subject<EstablecimientosEdit[]>;
 
@@ -27,8 +27,8 @@ export class EstablecimientosService {
       };
     }
 
-    public getEstablecimientos():Observable<any>{
-      return this.http.get(this.URLbase, this.getHttpOptions());  
+    public getEstablecimientos():Observable<EstablecimientosEdit[]>{
+      return this.http.get<EstablecimientosEdit[]>(this.URLbase, this.getHttpOptions());  
     }  
 
     // public postEstablecimiento(establecimiento: Partial<EstablecimientosEdit>):Observable<any>{
@@ -39,11 +39,11 @@ export class EstablecimientosService {
       return this.http.get<EstablecimientosEdit[]>(this.URLbase, this.getHttpOptions());
     }
 
-    public postEstablecimiento(establecimiento: EstablecimientosEdit):Observable<any>{
+    public postEstablecimiento(establecimiento: EstablecimientosEdit):Observable<EstablecimientosEdit>{
       return this.http.post<EstablecimientosEdit>(this.URLbase, establecimiento, this.getHttpOptions());
     }
 
-    reloadEstablecimeintos(){
+    reloadEstablecimientos(){
       this.listaEstablecimientos().subscribe((establecimiento:EstablecimientosEdit[])=>{
         this.setEstablecimientos(establecimiento);
       })

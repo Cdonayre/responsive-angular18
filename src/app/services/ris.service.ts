@@ -25,8 +25,8 @@ export class RisService {
             })
     };
   }
-  public getRis():Observable<any>{
-    return this.http.get(this.urlBase, this.getHttpOptions());
+  public getRis():Observable<Ris[]>{
+    return this.http.get<Ris[]>(this.urlBase, this.getHttpOptions());
   }
 
 }
