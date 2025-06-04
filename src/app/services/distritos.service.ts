@@ -15,7 +15,6 @@ export class DistritosService {
   getToken(){
     return localStorage.getItem('authUser');
   }
-
   private getHttpOptions() {
     const token = this.getToken();
     return {
@@ -25,7 +24,6 @@ export class DistritosService {
       })
     };
   }
-
   public getDistritos():Observable<any>{
     return this.http.get(this.URLbase, this.getHttpOptions());
   }

@@ -28,6 +28,11 @@ export const routes: Routes = [
                 title:'Distritos',
                 loadComponent:()=>import('./page/distritos/distritos.component')
             },
+            {
+                path:'usuario',
+                title:'Usuarios',
+                loadComponent:()=>import('./page/usuario/usuario.component')
+            }
         ]
     }
 ];

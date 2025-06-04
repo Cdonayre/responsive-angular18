@@ -15,8 +15,6 @@ export class CategoriasService {
   getToken(){
     return localStorage.getItem('authUser');
   }
-
-
   private getHttpOptions() {
     const token = this.getToken();
     return {
@@ -26,8 +24,6 @@ export class CategoriasService {
       })
     };
   }
-
-
   public getCategorias():Observable<any>{
     return this.http.get(this.URLbase, this.getHttpOptions());  
   }  

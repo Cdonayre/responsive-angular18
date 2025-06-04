@@ -1,0 +1,77 @@
+.container.form-container {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+  /* Ensure header has relative positioning if close-button is absolute within it */
+  position: relative; /* Added for correct absolute positioning of close-button */
+}
+
+.close-button {
+  position: absolute;
+  top: -10px; /* Adjust as needed */
+  right: -10px; /* Adjust as needed */
+  z-index: 100;
+  color: #555; /* A softer color for the close icon */
+}
+
+.close-button:hover {
+    color: #000; /* Darker on hover */
+}
+
+.dialog-title {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #3f51b5;
+}
+
+.dialog-content {
+  padding: 0 24px 0 24px;
+}
+
+.form-fields-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* Specific CSS to ensure input text starts correctly, especially with suffixes */
+/* This targets the input element within the Material form field */
+mat-form-field .mat-mdc-form-field-infix {
+    padding-top: 8px; /* Adjust padding if needed to align input text */
+    padding-bottom: 8px;
+}
+
+/* Ensure the input itself has consistent padding and avoids icon overlap */
+mat-form-field input.mat-mdc-input-element {
+    padding-left: 0; /* Ensures text starts at the very beginning of the input area */
+    padding-right: 0; /* Ensures text doesn't overlap the suffix icon */
+}
+
+/* If the placeholder/label is still too far left, adjust the label's transform origin */
+mat-form-field .mat-mdc-floating-label {
+    transform-origin: left top; /* Ensures the label animates from the correct spot */
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 20px;
+}
+
+.button-container button {
+  min-width: 120px;
+}

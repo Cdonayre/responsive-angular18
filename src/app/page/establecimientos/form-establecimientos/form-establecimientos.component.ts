@@ -21,16 +21,16 @@ import { Distritos, DistritosService } from '../../../services/distritos.service
   styleUrl: './form-establecimientos.component.css'
 })
 export default class FormEstablecimientosComponent {
-  risService = inject(RisService);
-  categoriaService=inject(CategoriasService);
-  distritoService=inject(DistritosService);
+  private risService = inject(RisService);
+  private categoriaService=inject(CategoriasService);
+  private distritoService=inject(DistritosService);
   readonly dialogref=inject(MatDialogRef<EstablecimientosComponent>);
   categorias:Categorias []=[];
   ris: Ris[]  =[];
   distritos: Distritos[] = [];
   
   establecimientoData=inject<EstablecimientosEdit>(MAT_DIALOG_DATA);
-
+  
   constructor(private establecimeintoService:EstablecimientosService,
     public closeDialogRef: MatDialogRef<FormEstablecimientosComponent>
   ){

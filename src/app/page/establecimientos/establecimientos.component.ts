@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, inject, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatTableModule,MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { EstablecimientosEdit, EstablecimientosService } from '../../services/establecimientos.service';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
@@ -12,8 +12,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatDialog,MatDialogModule} from '@angular/material/dialog';
 import FormEstablecimientosComponent from './form-establecimientos/form-establecimientos.component';
 import Swal from 'sweetalert2';
-import { RisService } from '../../services/ris.service';
-import { forkJoin } from 'rxjs';
+import { Ris, RisService } from '../../services/ris.service';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 
 interface EstablecimientoDisplay extends EstablecimientosEdit {
   risNombre?: string;
@@ -26,11 +26,15 @@ interface EstablecimientoDisplay extends EstablecimientosEdit {
   templateUrl: './establecimientos.component.html',
   styleUrl: './establecimientos.component.css'
 })
-export default class EstablecimientosComponent implements OnInit, AfterViewInit {
+export default class EstablecimientosComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   readonly dialog=inject(MatDialog);
+  private establecimientoService=inject(EstablecimientosService);
+  private risService= inject(RisService);
+  //private router = inject(Router);
   establecimientos: EstablecimientosEdit[] = [];
+
   establecimiento:EstablecimientosEdit = 
   {
     id:0,
@@ -43,58 +47,38 @@ export default class EstablecimientosComponent implements OnInit, AfterViewInit 
     nombre:''
   };
 
-  nuevoEstablecimiento:Partial<EstablecimientosEdit>= {codigo:'', nombre:''}  
-  //Datatable
+  // nuevoEstablecimiento:Partial<EstablecimientosEdit>= {codigo:'', nombre:''}  
+  
   displayedColumns: string []=['numero','codigo', 'risNombre','nombre','actions'];
   establecimientoDataSource = new MatTableDataSource<EstablecimientoDisplay>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   
-  router = inject(Router);
-  establecimientoCreado: any;
+  //establecimientoCreado: any;
   private risMap: Map<number, string>= new Map();
-  constructor( 
-    private establecimientoService:EstablecimientosService,
-    private risService: RisService
-  ) {}
+  private destroy$ = new Subject<void>();
+  constructor() {}
 
-//    this.establecimientoService.getEstablecimientos().subscribe({
-//     next: (datos:any) => {
-//     this.establecimientos = datos;
-//     //muestra los datos en el datatable
-//     this.establecimientoDataSource = new MatTableDataSource<EstablecimientosEdit>(datos);
-//     this.establecimientoDataSource.paginator = this.paginator;
-//     }, 
-//     error:(err) =>{
-//       console.log(err);
-//     }
-//   });  
-// }
   ngOnInit(): void {
     this.loadInitalData();
   }
 
   ngAfterViewInit(): void {
-    this.establecimientoDataSource.paginator = this.paginator;
+   this.establecimientoDataSource.paginator = this.paginator;
   }
+ngOnDestroy():void {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
 
 
-// getEstablecimientos(){
-//   this.establecimientoService.getEstablecimientos().subscribe({
-//     next:(datos)=>{
-//       console.log("datos cargados");
-//     },
-//     error:(err)=>{
-//       console.log(err);
-//     }
-//   })
-// }
 loadInitalData():void{
   forkJoin({
     establecimientos: this.establecimientoService.getEstablecimientos(),
     risItems: this.risService.getRis()
-  }).subscribe({
+  }).pipe(takeUntil(this.destroy$))
+  .subscribe({
     next: ({establecimientos, risItems})=> {
-      risItems.forEach(ris => {
+      risItems.forEach((ris: Ris) => {
         this.risMap.set(ris.id, ris.nombre);
       });
       this.processAndSetDataSource(establecimientos);
@@ -106,17 +90,6 @@ loadInitalData():void{
   });
 }
 
-// postEstablecimiento(establecimeinto:EstablecimientosEdit){
-//   this.establecimientoService.postEstablecimiento(establecimeinto).subscribe({
-//     next:(datos:any)=>{
-//       this.establecimientoCreado=datos;
-//       this.establecimientos.push(this.establecimientoCreado);
-//   },
-//   error:(err)=>{
-//     console.log(err);
-//   }
-// });
-// }
 
 processAndSetDataSource(establecimientosData:EstablecimientosEdit[]):void{
   const displayData: EstablecimientoDisplay[] = establecimientosData.map(est => ({
@@ -128,22 +101,22 @@ processAndSetDataSource(establecimientosData:EstablecimientosEdit[]):void{
     this.establecimientoDataSource.paginator = this.paginator;
   }   
 
-  postEstablecimiento(establecimientosData:EstablecimientosEdit){
-    this.establecimientoService.postEstablecimiento(establecimientosData).subscribe({
-      next:(establecimientoCreado:EstablecimientosEdit)=>{
-        Swal.fire({
-          title:"Creado!",
-          text:"El registro ha sido creado",
-          icon:"success"
-        });
-        this.refreshTable();
-      },
-      error:(err)=>{
-        console.error('Error al crear el establecimiento:', err);
-        Swal.fire('Error', 'No se pudo crear el registro', 'error');
-      }
-    });
-  }
+  // postEstablecimiento(establecimientosData:EstablecimientosEdit){
+  //   this.establecimientoService.postEstablecimiento(establecimientosData).subscribe({
+  //     next:(establecimientoCreado:EstablecimientosEdit)=>{
+  //       Swal.fire({
+  //         title:"Creado!",
+  //         text:"El registro ha sido creado",
+  //         icon:"success"
+  //       });
+  //       this.refreshTable();
+  //     },
+  //     error:(err)=>{
+  //       console.error('Error al crear el establecimiento:', err);
+  //       Swal.fire('Error', 'No se pudo crear el registro', 'error');
+  //     }
+  //   });
+  // }
 
 
 eliminarEstablecimiento(establecimiento: EstablecimientosEdit) {
@@ -158,8 +131,8 @@ eliminarEstablecimiento(establecimiento: EstablecimientosEdit) {
     cancelButtonText: "Cancelar"
   }).then((result) => {
     if (result.isConfirmed) {
-      this.establecimientoService.deleteEstablecimiento(establecimiento.id).subscribe({
-        next: (datos) => {
+      this.establecimientoService.deleteEstablecimiento(establecimiento.id).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (datos:any) => {
           Swal.fire({
             title: "Eliminado!",
             text: "El registro ha sido eliminado.",
@@ -167,7 +140,7 @@ eliminarEstablecimiento(establecimiento: EstablecimientosEdit) {
           });
           this.refreshTable();
         },
-        error: (err) => {
+        error: (err:any) => {
           console.error('Error al eliminar el establecimiento:', err);
           Swal.fire({
             title: "Error!",
@@ -182,29 +155,21 @@ eliminarEstablecimiento(establecimiento: EstablecimientosEdit) {
 
 
 openDialog(establecimiento1: EstablecimientosEdit){
- // console.log(establecimiento1);
   const dialogref=this.dialog.open(FormEstablecimientosComponent,{
     data:establecimiento1
   })
-  dialogref.afterClosed().subscribe(dialogResult=>{
+  dialogref.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(dialogResult=>{
     console.log(`Se ha cerrado`);
-    // if(result!==undefined){
-    //   this.establecimiento.id=result.id;
-    //   this.establecimiento.codigo=result.codigo;
-    //   this.establecimiento.nombre=result.nombre;
-    // }
     this.refreshTable();
   });
 }
 
 refreshTable() {
-  this.establecimientoService.getEstablecimientos().subscribe({
+  this.establecimientoService.getEstablecimientos().pipe(takeUntil(this.destroy$)).subscribe({
     next: (datos: EstablecimientosEdit[]) => {
-      // this.establecimientos = datos;
-      // this.establecimientoDataSource.data = datos;
       this.processAndSetDataSource(datos);
     },
-    error: (err) => {
+    error: (err:any) => {
       console.error('Error al refrescar la tabla:', err);
       Swal.fire('Error', 'No se pudo refrescar la tabla', 'error');
     }

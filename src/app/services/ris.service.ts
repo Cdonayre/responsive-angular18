@@ -15,7 +15,6 @@ export class RisService {
   getToken(){
     return localStorage.getItem('authUser');
   }
-
   private getHttpOptions(){
     const token = this.getToken();
     return{
@@ -28,9 +27,7 @@ export class RisService {
   public getRis():Observable<Ris[]>{
     return this.http.get<Ris[]>(this.urlBase, this.getHttpOptions());
   }
-
 }
-
 
 export interface Ris {
   id:         number;
