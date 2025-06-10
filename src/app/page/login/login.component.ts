@@ -7,7 +7,7 @@ import {
   FormsModule,
   Validators,
 } from '@angular/forms';
-import AuthService from '../../auth/auth.service';
+import AuthService from '../../auth/services/auth.service';
 import { AuthUserService } from '../../auth/auth-user.service';
 import { SwalAlertService } from '../../services/swal-alert.service';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
@@ -38,62 +38,7 @@ export default class LoginComponent {
     clave: new FormControl('', [Validators.required]),
   });
 
-  onSubmit() {
-    let loginData: any;
-    let endpointType: 'main' | 'user';
 
-    if (this.tipoLogin === 'main') {
-      if (this.loginForm.invalid) {
-        this.loginForm.markAllAsTouched();
-        this.swalAlertService.showError(
-          'Formulario inválido',
-          'Por favor ingrese usuario y contraseña válidos.'
-        );
-        return;
-      }
-      loginData = {
-        username: this.loginForm.value.email,
-        password: this.loginForm.value.password,
-      };
-      endpointType = 'main';
-    } else {
-      if (this.loginFormUser.invalid) {
-        this.loginFormUser.markAllAsTouched();
-        this.swalAlertService.showError(
-          'Formulario inválido',
-          'Por favor ingrese usuario y contraseña válidos.'
-        );
-        return;
-      }
-      loginData = {
-        username: this.loginFormUser.value.usuario,
-        password: this.loginFormUser.value.clave,
-      };
-      endpointType = 'user';
-    }
-
-    this.authService.login(loginData, endpointType).subscribe({
-      next: (token) => {
-        if (this.authService.isLoggedIn()) {
-          this.swalAlertService.showSuccess(
-            'Login exitoso',
-            'Bienvenido al sistema'
-          );
-          this.router.navigate(['/dashboard']);
-        }
-      },
-      error: (error) => {
-        console.error('Error de inicio de sesión:', error);
-        this.swalAlertService.showError(
-          'Error de inicio de sesión',
-          error.message || 'Por favor, revise sus credenciales.'
-        );
-      },
-    });
-  }
-  switchLoginType(tipo: 'main' | 'user'): void {
-    this.tipoLogin = tipo;
-  }
 
   // onSubmit(){
   //  switch(Number(this.tipoLogin)){

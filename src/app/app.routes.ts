@@ -1,38 +1,26 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './auth/auth.guard';
+import { authGuard, AuthLoginGuard } from './core/guard/auth.guard';
 
 export const routes: Routes = [
     {path: '',redirectTo: 'login',pathMatch: 'full'},
-    {path:'login',
-        title:'Login',
-        loadComponent:()=>import('./page/login/login.component')
-        
+    {
+    path: 'login',
+    loadChildren: () => import('./auth/auth.routes').then((m) => m.AUTH_ROUTES),
+    canActivate: [AuthLoginGuard],
     },
-    {path:'dashboard', 
-        loadComponent: () => import('./page/dashboard/dashboard.component'),
-        canActivate: [authGuard],
-        children: [
-            {path:'establecimientos',
-                title:'Establecimientos',
-                loadComponent:()=>import('./page/establecimientos/establecimientos.component')
-            },
-            {path:'ris',
-                title:'Ris',
-                loadComponent:()=>import('./page/ris/ris.component')
-            },
-            {path:'categorias',
-                title:'Categorías',
-                loadComponent:()=>import('./page/categorias/categorias.component')
-            },
-            {path:'distritos',
-                title:'Distritos',
-                loadComponent:()=>import('./page/distritos/distritos.component')
-            },
-            {
-                path:'usuario',
-                title:'Usuarios',
-                loadComponent:()=>import('./page/usuario/usuario.component')
-            }
-        ]
-    }
+    {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('./admin/bussiness/business.routes').then((m) => m.ADMIN_ROUTES),
+    canActivate: [authGuard],
+    data: { breadcrumb: 'Inicio' },
+    },
+  // {
+  //   path: 'sidebar',
+  //   loadChildren: () =>
+  //     import('./shared/sidebar/sidebar.component').then((m) => m.SidebarComponent),
+  //   canActivate: [authGuard],
+  //   data: { breadcrumb: 'Inicio' },
+  // },
+  { path: '**', redirectTo: 'not-found' },
 ];

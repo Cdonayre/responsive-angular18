@@ -3,5 +3,5 @@ export enum STORAGE_KEYS {
 }
 
 export enum STORAGE_NAMES {
-COMPANY_NAME = 'company_name',
+COMPANY_NAME ='token',// 'company_name',
 }

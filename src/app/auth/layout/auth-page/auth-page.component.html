@@ -1,0 +1,17 @@
+<div class="auth-page">
+  <div class="container-grid-list">
+    @if(isLogin ===true){
+      <app-login></app-login>
+    }@else {
+      <img src="/assets/images/404.png" class="container__img" alt="404_found">
+      <br><br>
+      <div class="button__container">
+        <button class="button__not_found" mat-raised-button color="raised" (click)="goBack()">Regresar</button>
+      </div>
+
+    }
+</div>
+</div>
+ @if(!isLogin){
+     <app-footer class="custom-app-footer"></app-footer>
+ }

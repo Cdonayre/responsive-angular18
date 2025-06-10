@@ -1,0 +1,53 @@
+
+
+.form {
+  width: 70%;
+  position: absolute;
+  top: 15%;
+  left: 15%;
+
+  .form-actions__input {
+    width: 100%;
+  }
+  .form-actions__text {
+    display: flex;
+    justify-content: center;
+  }
+  .form-actions__img {
+    width: 100%;
+    height: 70px;
+  }
+}
+
+.formSecond{
+  @extend .form;
+  top: 3%;
+  width: 90%;
+  left: 5%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.form-actions__login {
+  margin-right: 10px;
+}
+
+.form-actions__forget {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000 !important;
+  text-decoration: underline;
+}
+
+.mat-form-field-label {
+  color: blue;
+}
+
+.text-cumplimiento{
+  text-align: justify;
+}
