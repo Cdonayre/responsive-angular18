@@ -1,14 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
+import AuthService from '../auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RisService {
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
   private http=inject(HttpClient);
   private urlBase = environment.apiURL + '/ris';
 
@@ -24,8 +25,30 @@ export class RisService {
             })
     };
   }
+
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken(); // <-- This will now return the correct token string
+    if (!token) {
+      console.warn(
+        'No authentication token found. Redirecting to login or handling.'
+      );
+      return new HttpHeaders({ 'Content-Type': 'application/json' }); // Return headers without auth
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+  }
+
   public getRis():Observable<Ris[]>{
-    return this.http.get<Ris[]>(this.urlBase, this.getHttpOptions());
+    return this.http.get<Ris[]>(this.urlBase, { headers: this.getAuthHeaders() })
+        .pipe(
+          catchError(error=>{
+            console.error('Error fetching usuarios ',error);
+            return throwError(()=>error);
+          })
+        );
   }
 }
 

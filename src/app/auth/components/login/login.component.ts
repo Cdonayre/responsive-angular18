@@ -59,7 +59,7 @@ import { CommonModule } from '@angular/common';
     MessageCardComponent,
     MatInputModule,
     MatIconModule,
-    MatButton
+    MatButton,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -82,7 +82,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   tipoLogin: 'main' | 'user' = 'main';
 
-
   public ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
       this.router.navigate([ROUTE_PATHS.DASHBOARD]);
@@ -101,15 +100,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.tipoLogin === 'main') {
       if (this.formLogin.invalid) {
         this.formLogin.markAllAsTouched();
-        this.showErrorAlert('Formulario Inválido', 'Por favor, ingrese un correo electrónico y contraseña válidos.');
+        this.showErrorAlert(
+          'Formulario Inválido',
+          'Por favor, ingrese un correo electrónico y contraseña válidos.'
+        );
         return;
       }
       loginRequest = {
         email: this.formLogin.get('email')?.value || '',
-        password: this.formLogin.get('password')?.value || ''
+        password: this.formLogin.get('password')?.value || '',
       };
       loginObservable = this.authService.loginAuth(loginRequest);
-loginObservable.pipe(take(1)).subscribe({
+      loginObservable.pipe(take(1)).subscribe({
         next: (res) => {
           if (this.authService.isAuthenticated()) {
             Swal.fire({
@@ -117,30 +119,39 @@ loginObservable.pipe(take(1)).subscribe({
               title: '¡Bienvenido!',
               text: 'Inicio de sesión exitoso.',
               timer: 1500,
-              showConfirmButton: false
+              showConfirmButton: false,
             }).then(() => {
               this.router.navigate([ROUTE_PATHS.DASHBOARD]);
             });
           } else {
-             this.showErrorAlert('Error de autenticación', 'Inicio de sesión incompleto. Inténtelo de nuevo.');
+            this.showErrorAlert(
+              'Error de autenticación',
+              'Inicio de sesión incompleto. Inténtelo de nuevo.'
+            );
           }
         },
         error: (error: HttpErrorResponse) => {
-          this.showErrorAlert('Error de Autenticación', error?.error?.data?.message || 'Credenciales inválidas o error del servidor.');
+          this.showErrorAlert(
+            'Error de Autenticación',
+            error?.error?.data?.message ||
+              'Credenciales inválidas o error del servidor.'
+          );
         },
       });
-
     } else {
       if (this.formLoginUser.invalid) {
         this.formLoginUser.markAllAsTouched();
-        this.showErrorAlert('Formulario Inválido', 'Por favor, ingrese un nombre de usuario y clave válidos.');
+        this.showErrorAlert(
+          'Formulario Inválido',
+          'Por favor, ingrese un nombre de usuario y clave válidos.'
+        );
         return;
       }
       loginRequest = {
         usuario: this.formLoginUser.get('usuario')?.value || '',
-        clave: this.formLoginUser.get('clave')?.value || ''
+        clave: this.formLoginUser.get('clave')?.value || '',
       };
-      loginObservable = this.authService.loginUser(loginRequest); 
+      loginObservable = this.authService.loginUser(loginRequest);
 
       loginObservable.pipe(take(1)).subscribe({
         next: (res) => {
@@ -150,16 +161,23 @@ loginObservable.pipe(take(1)).subscribe({
               title: '¡Bienvenido!',
               text: 'Inicio de sesión exitoso.',
               timer: 1500,
-              showConfirmButton: false
+              showConfirmButton: false,
             }).then(() => {
               this.router.navigate([ROUTE_PATHS.DASHBOARD]);
             });
           } else {
-             this.showErrorAlert('Error de autenticación', 'Inicio de sesión incompleto. Inténtelo de nuevo.');
+            this.showErrorAlert(
+              'Error de autenticación',
+              'Inicio de sesión incompleto. Inténtelo de nuevo.'
+            );
           }
         },
         error: (error: HttpErrorResponse) => {
-          this.showErrorAlert('Error de Autenticación', error?.error?.data?.message || 'Credenciales inválidas o error del servidor.');
+          this.showErrorAlert(
+            'Error de Autenticación',
+            error?.error?.data?.message ||
+              'Credenciales inválidas o error del servidor.'
+          );
         },
       });
     }
@@ -179,7 +197,7 @@ loginObservable.pipe(take(1)).subscribe({
       confirmButtonColor: '#f44336',
     });
   }
-  
+
   hidePassw(__event: MouseEvent) {
     this.hide.update((current) => !current);
   }

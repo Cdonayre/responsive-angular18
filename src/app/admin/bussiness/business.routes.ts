@@ -24,7 +24,7 @@ export const ADMIN_ROUTES: Routes = [
         }, 
       },
       {
-        path: 'Establecimientos',
+        path: 'establecimientos',
         component: EstablecimientosComponent,
         data: { breadcrumb: 'Establecimientos',
           label:'Establecimientos',

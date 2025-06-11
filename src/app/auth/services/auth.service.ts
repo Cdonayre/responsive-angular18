@@ -15,15 +15,10 @@ import { AuthUser, AuthUserTokenPayload } from '../models/auth-user.model';
   providedIn: 'root'
 })
 export default class AuthService {
-  // login(loginData: any, endpointType: string) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // isLoggedIn() {
-  //   throw new Error('Method not implemented.');
-  // }
 
   private readonly http = inject(HttpClient);
-  private readonly storageEncrypt = inject(StorageEncryptService);
+  private readonly storageEncrypt = inject(StorageEncryptService); 
+  private auth_token = 'authentication_value';
   private readonly tokenKey = STORAGE_KEYS.TOKEN;
 
   private currentUserSubject: BehaviorSubject<AuthUser | null>;
@@ -67,6 +62,11 @@ export default class AuthService {
     }
   }
 
+  public getToken(): string | null {
+    const authUser = this.currentUserSubject.value;
+    return authUser ? authUser.token : null;
+  }
+
   public getDataToken():( AuthUserTokenPayload & {userType?: 'admin_dashboard_user'| 'regular_api_user'}) | null {
     const authUser= this.currentUserSubject.value;
     if(authUser && authUser.token){
@@ -79,28 +79,11 @@ export default class AuthService {
       }
     }
     return null;
-    // const token = this.storageEncrypt.get(this.tokenKey);
-    // if (token) {
-    //   return jwtDecode(token);
-    // } else {
-    //   return null;
-    // }
   } 
 
   public isAuthenticated(): boolean {
     const authUser = this.currentUserSubject.value;
     return authUser !== null && this.isTokenValid(authUser.token);
-    // const token = this.storageEncrypt.get(this.tokenKey);
-    // if (token) {
-    //   try {
-    //     const payload = JSON.parse(atob(token.split('.')[1]));
-    //     const exp = payload.exp * 1000;
-    //     return Date.now() < exp;
-    //   } catch (error) {
-    //     return false;
-    //   }
-    // }
-    // return false;
   }
 
   public isAdminDashboardUser(): boolean {
@@ -120,7 +103,7 @@ export default class AuthService {
             userType: 'admin_dashboard_user',
         };
           this.storageEncrypt.set(this.tokenKey, JSON.stringify(authUser));
-          this.currentUserSubject.next(authUser); // Immediately update currentUser
+          this.currentUserSubject.next(authUser);
           return res;
         }),
         catchError((error) => {
