@@ -13,6 +13,7 @@ export class UserService {
   private http = inject(HttpClient);
   private urlBase = environment.apiUserUrl + '/users';
 
+
   getToken() {
     return localStorage.getItem('authentication_value');
   }
@@ -40,8 +41,8 @@ export class UserService {
     });
   }
 
-  public getUsuariosSistemas(): Observable<UsuarioSistemas[]> {
-    return this.http.get<UsuarioSistemas[]>(`${this.urlBase}/sistemas/${1}`, { headers: this.getAuthHeaders() })
+  public getUsuariosSistemas(tipoRol:number): Observable<UsuarioSistemas[]> {
+    return this.http.get<UsuarioSistemas[]>(`${this.urlBase}/sistemas/${tipoRol}`, { headers: this.getAuthHeaders() })
     .pipe(
       catchError(error=>{
         console.error('Error fetching usuarios ',error);
@@ -142,4 +143,10 @@ export interface UsuarioCrear {
   nombre_usuario: string;
   correo: string;
   clave?: string;
+}
+
+
+export interface Roles{
+  id: number;
+  descripcion: string;
 }

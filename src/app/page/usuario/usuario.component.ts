@@ -6,9 +6,9 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { UserService, UsuarioCrear, Usuarios, UsuarioSistemas } from '../../services/user.service';
+import { Roles, UserService, UsuarioCrear, Usuarios, UsuarioSistemas } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -20,11 +20,13 @@ import {
 } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Subject, takeUntil, tap } from 'rxjs';
+import { Subject, Subscription, takeUntil, tap } from 'rxjs';
 import { getSpanishPaginatorIntl } from '../../helper/general-function';
 import { FormUsuarioComponent } from './form-usuario/form-usuario.component';
 import Swal from 'sweetalert2';
 import { SwalAlertService } from '../../services/swal-alert.service';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-usuario',
@@ -45,6 +47,8 @@ import { SwalAlertService } from '../../services/swal-alert.service';
     MatDividerModule,
     MatIconModule,
     MatDialogModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   templateUrl: './usuario.component.html',
   styleUrl: './usuario.component.css',
@@ -56,20 +60,16 @@ export default class UsuarioComponent
   private swalAlertService=inject(SwalAlertService);
   private usuarioService = inject(UserService);
   private destroy$ = new Subject<void>();
+  private subscripcion:Subscription = new Subscription();
+  rolSeleccionado: number = 0; // 0: admin, 1: usuario normal
   dataSource = new MatTableDataSource<UsuarioSistemas>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  // listaUsuarios: UsuarioSistemas = {
-  //   dni: '',
-  //   id_usuario: 0,
-  //   correo: '',
-  //   nombre: '',
-  //   apellido: '',
-  //   nombre_usuario: '',
-  //   id_sistema: 0,
-  //   nombre_sistema: '',
-  //   id_rol: 0,
-  //   nombre_rol: '',
-  // };
+
+  public roles:Roles[]=[
+    {id:0,descripcion:'Ninguno'},
+    {id:1,descripcion:'Asistencia'},
+  ]
+  
 
   displayedColumns: string[] = [
     'dni',
@@ -80,7 +80,6 @@ export default class UsuarioComponent
     'nombre_rol',
     'actions',
   ];
-
   resultLength = 0;
   isLoadingResults = true;
   pageSizeOptions: number[] = [5, 10, 20, 50];
@@ -88,7 +87,7 @@ export default class UsuarioComponent
   cargarUsuariosSistemas(): void {
     this.isLoadingResults = true;
     this.usuarioService
-      .getUsuariosSistemas()
+      .getUsuariosSistemas(this.rolSeleccionado)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: UsuarioSistemas[]) => {
@@ -105,8 +104,38 @@ export default class UsuarioComponent
   }
 
   constructor() {}
+  loadUsuariosByRol():void{
+    this.isLoadingResults = true;
+    this.usuarioService
+      .getUsuariosSistemas(this.rolSeleccionado)
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next:(data:UsuarioSistemas[])=>{
+          this.dataSource.data=data;
+          this.isLoadingResults=false;
+          if(this.paginator){
+            this.dataSource.paginator = this.paginator;
+          }
+          console.log('Usuarios cargados');
+        },
+        error: (err) => {
+          console.error('error al cargar UsuarioSIstemas: ', err);
+          this.isLoadingResults = false;
+          this.dataSource.data = [];
+          this.swalAlertService.showError('Error al cargar los usuarios del sistema');
+        },
+      });
+  }
+  onRolChange(event:any){
+    this.rolSeleccionado = event.value;
+    console.log('Rol seleccionado');
+    this.loadUsuariosByRol();
+  }
   ngOnInit(): void {
-    this.cargarUsuariosSistemas();
+    this.loadUsuariosByRol();
+    //this.cargarUsuariosSistemas();
   }
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -125,6 +154,8 @@ export default class UsuarioComponent
    }
   }
 
+
+
   openDialog(usuarios: UsuarioSistemas | null) {
     const dialogref = this.dialog.open(FormUsuarioComponent, {
       data: usuarios,
@@ -141,18 +172,19 @@ export default class UsuarioComponent
   }
 
   refreshTable() {
-    this.usuarioService
-      .getUsuariosSistemas()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (datos: UsuarioSistemas[]) => {
-          this.processAndSetDataSource(datos);
-        },
-        error: (err: any) => {
-          console.error('Error al refrescar la tabla:', err);
-          Swal.fire('Error', 'No se pudo refrescar la tabla', 'error');
-        },
-      });
+    this.loadUsuariosByRol();
+    // this.usuarioService
+    //   .getUsuariosSistemas(this.rolSeleccionado)
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({
+    //     next: (datos: UsuarioSistemas[]) => {
+    //       this.processAndSetDataSource(datos);
+    //     },
+    //     error: (err: any) => {
+    //       console.error('Error al refrescar la tabla:', err);
+    //       Swal.fire('Error', 'No se pudo refrescar la tabla', 'error');
+    //     },
+    //   });
   } 
 
   eliminarUser(user: UsuarioSistemas): void {
@@ -171,31 +203,4 @@ export default class UsuarioComponent
       }
     });
   }
-
-  // usuariosPaginados():void{
-  //   this.isLoadingResults = true;
-  //   if (!this.paginator){
-  //     console.error('La paginación no se encuentra disponible');
-  //     this.isLoadingResults=false;
-  //     return;
-  //   }
-  //   const page = this.paginator.pageIndex + 1;
-  //   const limit = this.paginator.pageSize;
-
-  //   this.usuarioService.getUsuariosPaginado(page, limit)
-  //   .subscribe({
-  //     next:(data: any)=> {
-  //       console.log(data);
-  //       this.isLoadingResults = false;
-  //       this.resultLength = data.totalUsers;
-  //       this.dataSource = data;
-  //     },
-  //     error:(err)=> {
-  //       this.isLoadingResults = false;
-  //       console.error('Error al obtener la paginación de usuarios:', err);
-  //       this.dataSource = [];
-  //       this.resultLength = 0
-  //     }
-  //   });
-  // }
 }

@@ -14,17 +14,17 @@ export const ADMIN_ROUTES: Routes = [
     component: AdminLayoutComponent,
     data: { breadcrumb: { skip: true } },
     children: [
-      // {
-      //   path: 'init',
-      //   component: DashboardComponent,
-      //   data: { breadcrumb: 'dashboard',
-      //     label:'Dashboard',
-      //     icon:'dashboard',
-      //     visibleToUserTypes: ['admin_dashboard_user'] 
-      //   }, 
-      // },
       {
         path: 'init',
+        component: DashboardComponent,
+        data: { breadcrumb: 'dashboard',
+          label:'Dashboard',
+          icon:'dashboard',
+          visibleToUserTypes: ['admin_dashboard_user'] 
+        }, 
+      },
+      {
+        path: 'establecimientos',
         component: EstablecimientosComponent,
         data: { breadcrumb: 'Establecimientos',
           label:'Establecimientos',

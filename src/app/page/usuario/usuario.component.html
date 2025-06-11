@@ -2,6 +2,15 @@
   <button mat-flat-button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="openDialog(null)">
     Añadir
   </button>
+<mat-form-field class="w-full max-w-xs mb-4 rounded-md">
+  <mat-label >Tipo de rol</mat-label>
+  <mat-select [(ngModel)]="rolSeleccionado" (selectionChange)="onRolChange($event)" >
+    @for (rol of roles; track $index) {
+      <mat-option [value]="rol.id">{{rol.descripcion}}</mat-option>
+    }
+    
+  </mat-select>
+</mat-form-field>
 </div>
 <div class="mat-elevation-z8">
   <table mat-table [dataSource]="dataSource">
