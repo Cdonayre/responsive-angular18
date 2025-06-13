@@ -6,7 +6,15 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Roles, UserService, UsuarioCrear, Usuarios, UsuarioSistemas } from '../../services/user.service';
+import {
+  DeleteResponse,
+  Roles,
+  User,
+  UserService,
+  UsuarioCrear,
+  Usuarios,
+  UsuarioSistemas,
+} from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,7 +56,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatIconModule,
     MatDialogModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './usuario.component.html',
   styleUrl: './usuario.component.css',
@@ -57,19 +65,20 @@ export default class UsuarioComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   readonly dialog = inject(MatDialog);
-  private swalAlertService=inject(SwalAlertService);
+  private swalAlertService = inject(SwalAlertService);
   private usuarioService = inject(UserService);
   private destroy$ = new Subject<void>();
-  private subscripcion:Subscription = new Subscription();
+  private subscripcion: Subscription = new Subscription();
   rolSeleccionado: number = 0; // 0: admin, 1: usuario normal
   dataSource = new MatTableDataSource<UsuarioSistemas>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  public roles:Roles[]=[
-    {id:0,descripcion:'Ninguno'},
-    {id:1,descripcion:'Asistencia'},
-  ]
-  
+  public roles: Roles[] = [
+    { id: 0, descripcion: 'Ninguno' },
+    { id: 1, descripcion: 'Administrador' },
+    { id: 2, descripcion: 'Supervisor' },
+    { id: 3, descripcion: 'Empleado' },
+  ];
 
   displayedColumns: string[] = [
     'dni',
@@ -104,18 +113,16 @@ export default class UsuarioComponent
   }
 
   constructor() {}
-  loadUsuariosByRol():void{
+  loadUsuariosByRol(): void {
     this.isLoadingResults = true;
     this.usuarioService
       .getUsuariosSistemas(this.rolSeleccionado)
-      .pipe(
-        takeUntil(this.destroy$)
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:(data:UsuarioSistemas[])=>{
-          this.dataSource.data=data;
-          this.isLoadingResults=false;
-          if(this.paginator){
+        next: (data: User[]) => {
+          this.dataSource.data = data;
+          this.isLoadingResults = false;
+          if (this.paginator && this.dataSource.paginator) {
             this.dataSource.paginator = this.paginator;
           }
           console.log('Usuarios cargados');
@@ -124,18 +131,19 @@ export default class UsuarioComponent
           console.error('error al cargar UsuarioSIstemas: ', err);
           this.isLoadingResults = false;
           this.dataSource.data = [];
-          this.swalAlertService.showError('Error al cargar los usuarios del sistema');
+          this.swalAlertService.showError(
+            'Error al cargar los usuarios del sistema'
+          );
         },
       });
   }
-  onRolChange(event:any){
+  onRolChange(event: any) {
     this.rolSeleccionado = event.value;
-    console.log('Rol seleccionado');
+    console.log('Rol seleccionado', this.rolSeleccionado);
     this.loadUsuariosByRol();
   }
   ngOnInit(): void {
     this.loadUsuariosByRol();
-    //this.cargarUsuariosSistemas();
   }
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -147,25 +155,23 @@ export default class UsuarioComponent
       this.dataSource.paginator = this.paginator;
     }
   }
-  processAndSetDataSource(usuarioData: UsuarioSistemas[]): void {
-   this.dataSource.data=usuarioData;
-   if (!this.paginator) {
-    this.dataSource.paginator = this.paginator;
-   }
-  }
+  // processAndSetDataSource(usuarioData: UsuarioSistemas[]): void {
+  //  this.dataSource.data=usuarioData;
+  //  if (!this.paginator) {
+  //   this.dataSource.paginator = this.paginator;
+  //  }
+  // }
 
-
-
-  openDialog(usuarios: UsuarioSistemas | null) {
+  openDialog(user: User | null) {
     const dialogref = this.dialog.open(FormUsuarioComponent, {
-      data: usuarios,
+      data: user,
     });
     dialogref
       .afterClosed()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(dialogResult => {
-        console.log(`Se ha cerrado`);
-        if(dialogResult==true){
+      .subscribe((dialogResult) => {
+        console.log(`Se ha cerrado. resultado ${dialogResult}`);
+        if (dialogResult == true) {
           this.refreshTable();
         }
       });
@@ -173,33 +179,28 @@ export default class UsuarioComponent
 
   refreshTable() {
     this.loadUsuariosByRol();
-    // this.usuarioService
-    //   .getUsuariosSistemas(this.rolSeleccionado)
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe({
-    //     next: (datos: UsuarioSistemas[]) => {
-    //       this.processAndSetDataSource(datos);
-    //     },
-    //     error: (err: any) => {
-    //       console.error('Error al refrescar la tabla:', err);
-    //       Swal.fire('Error', 'No se pudo refrescar la tabla', 'error');
-    //     },
-    //   });
-  } 
+  }
 
-  eliminarUser(user: UsuarioSistemas): void {
+  eliminarUser(user: User): void {
     this.swalAlertService.confirmDelete().then((result) => {
       if (result.isConfirmed) {
-        this.usuarioService.deleteUSer(user.id_usuario).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (datos:any) => {
-            this.swalAlertService.showSuccess('El usuario ha sido eliminado correctamente', 'Eliminado!');
-            this.refreshTable();
-          },
-          error: (err:any) => {
-            console.error('Error al eliminar el establecimiento:', err);
-            this.swalAlertService.showError('No se pudo eliminar el usuario');
-          }
-        });
+        this.usuarioService
+          .deleteUSer(user.id_usuario)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response: DeleteResponse) => {
+              this.swalAlertService.showSuccess(
+                response.message,
+                'Eliminado!'
+              );
+              this.refreshTable();
+            },
+            error: (err: any) => {
+              console.error(`Error al eliminar el usuario con id ${user.id_usuario}:`, err);
+              const errorMessage = err.message || 'No se pudo eliminar el usuario. Intente de nuevo';
+              this.swalAlertService.showError(errorMessage);
+            },
+          });
       }
     });
   }

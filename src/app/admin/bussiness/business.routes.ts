@@ -6,6 +6,7 @@ import RisComponent from '../../page/ris/ris.component';
 import DistritosComponent from '../../page/distritos/distritos.component';
 import CategoriasComponent from '../../page/categorias/categorias.component';
 import UsuarioComponent from '../../page/usuario/usuario.component';
+import  RolesComponent  from '../../page/roles/roles.component';
 
 
 export const ADMIN_ROUTES: Routes = [
@@ -67,7 +68,17 @@ export const ADMIN_ROUTES: Routes = [
           icon:'user',
           visibleToUserTypes: ['regular_api_user']
          },
-      }
+      },
+      {
+        path:'Roles',
+        component: RolesComponent,
+        data: {
+          breadcrumb: 'Roles',
+          label:'Roles',
+          icon:'role',
+          visibleToUserTypes: ['regular_api_user']
+        },
+      },
 
     ],
   },

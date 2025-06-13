@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { StorageEncryptService } from '../../services/storage/storage-encrypt.service';
 import { STORAGE_KEYS } from '../../global/constants/storage.constants';
 import { LoginRequest, DataResponse, LoginResponse, LogiResponse } from '../models/login.model';
@@ -113,8 +113,10 @@ export default class AuthService {
   }
 
   public loginUser(req:LoginRequest):Observable<LogiResponse>{
+    console.log(environment.apiGatewayUrl);
+   
     return this.http
-    .post<LogiResponse>(`${environment.apiUserUrl}/auth/login`, req)
+    .post<LogiResponse>(`${environment.apiGatewayUrl}/auth/login`, req)
     .pipe(
       tap((res)=>{
         const authUser: AuthUser={
@@ -137,7 +139,7 @@ export default class AuthService {
     if (currentUserType === 'admin_dashboard_user') {
       logoutUrl = `${environment.apiURL}/auth/login`;
     } else if (currentUserType === 'regular_api_user') {
-      logoutUrl = `${environment.apiUserUrl}/auth/login`;
+      logoutUrl = `${environment.apiGatewayUrl}/auth/login`;
     } else {
       this.storageEncrypt.removeData(this.tokenKey);
       this.currentUserSubject.next(null);
@@ -162,6 +164,20 @@ export default class AuthService {
         })
       );
   }
+public getAuthHeaders(): HttpHeaders {
+    const token = this.getToken(); // <-- This will now return the correct token string
+    if (!token) {
+      console.warn(
+        'No authentication token found. Redirecting to login or handling.'
+      );
+      return new HttpHeaders({ 'Content-Type': 'application/json' }); // Return headers without auth
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+  }
+
 
   public me(): Observable<AuthMe> {
     const currentUserType = this.currentUserSubject.value?.userType;
@@ -170,7 +186,7 @@ export default class AuthService {
     if(currentUserType === 'admin_dashboard_user'){
       apiURLForMe = `${environment.apiURL}/auth/me`;
     }else if(currentUserType === 'regular_api_user'){
-      apiURLForMe = `${environment.apiUserUrl}/auth/me`;
+      apiURLForMe = `${environment.apiGatewayUrl}/auth/me`;
 
     }else{
       return throwError(() => new Error('User type not recognized'));
@@ -187,6 +203,7 @@ export default class AuthService {
             return throwError(() => error);
           })
         );
+        
   }
 
 
