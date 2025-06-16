@@ -7,6 +7,7 @@ import DistritosComponent from '../../page/distritos/distritos.component';
 import CategoriasComponent from '../../page/categorias/categorias.component';
 import UsuarioComponent from '../../page/usuario/usuario.component';
 import  RolesComponent  from '../../page/roles/roles.component';
+import { ListaUsuariosComponent } from '../../page/lista-usuarios/lista-usuarios.component';
 
 
 export const ADMIN_ROUTES: Routes = [
@@ -21,8 +22,8 @@ export const ADMIN_ROUTES: Routes = [
         data: { breadcrumb: 'dashboard',
           label:'Dashboard',
           icon:'dashboard',
-          visibleToUserTypes: ['admin_dashboard_user'] 
-        }, 
+          visibleToUserTypes: ['admin_dashboard_user']
+        },
       },
       {
         path: 'establecimientos',
@@ -76,6 +77,16 @@ export const ADMIN_ROUTES: Routes = [
           breadcrumb: 'Roles',
           label:'Roles',
           icon:'role',
+          visibleToUserTypes: ['regular_api_user']
+        },
+      },
+            {
+        path:'Lista Usuarios',
+        component: ListaUsuariosComponent,
+        data: {
+          breadcrumb: 'Lista-usuarios',
+          label:'Lista Usuarios',
+          icon:'user',
           visibleToUserTypes: ['regular_api_user']
         },
       },

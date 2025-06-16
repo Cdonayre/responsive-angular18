@@ -42,10 +42,10 @@ export class RolesService {
     })
     .pipe(
       map(response=>{
-        if(response.status === 'success' && response.code ===200){
+        if(response.status === 'success' && (response.code === 200 || response.code === 201)){
           return response.data;
         }else{
-          throw new Error(`Error al crear el rol :${response.status}`);
+          throw new Error(`Error al crear el rol :${response.status}. Código${response.code}`);
         }
       })
     );
@@ -56,21 +56,21 @@ export class RolesService {
     })
     .pipe(
       map(response=>{
-        if(response.status === 'success' && response.code ===200){
+        if(response.status === 'success' && (response.code === 200 || response.code === 201)){
           return response. data;
         }else {
-          throw new Error(`Error al actualizar el id ${id}. ${response.status}`);
+          throw new Error(`Error al actualizar el id ${id}. ${response.status}. Código ${response.code}`);
         }
       })
     );
   }
-  public eliminarRol(id:number):Observable<any>{
+  public eliminarRol(id:number):Observable<string>{
     return this.http.delete<ApiResponse<any>>(`${this.urlBase}/${id}`, {
       headers: this.authService.getAuthHeaders(),
     })
     .pipe(
       map(response=>{
-        if (response.data === 'status' && response.code===200){
+        if (response.data === 'success' && response.code===200){
           return response.data;
         } else{
           throw new Error(`Error al eliminar el rol con id ${id}. ${response.data}`);

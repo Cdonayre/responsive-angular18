@@ -11,12 +11,10 @@ import {
   Roles,
   User,
   UserService,
-  UsuarioCrear,
-  Usuarios,
   UsuarioSistemas,
 } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -28,10 +26,9 @@ import {
 } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Subject, Subscription, takeUntil, tap } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { getSpanishPaginatorIntl } from '../../helper/general-function';
 import { FormUsuarioComponent } from './form-usuario/form-usuario.component';
-import Swal from 'sweetalert2';
 import { SwalAlertService } from '../../services/swal-alert.service';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
@@ -189,15 +186,17 @@ export default class UsuarioComponent
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response: DeleteResponse) => {
-              this.swalAlertService.showSuccess(
-                response.message,
-                'Eliminado!'
-              );
+              this.swalAlertService.showSuccess(response.message, 'Eliminado!');
               this.refreshTable();
             },
             error: (err: any) => {
-              console.error(`Error al eliminar el usuario con id ${user.id_usuario}:`, err);
-              const errorMessage = err.message || 'No se pudo eliminar el usuario. Intente de nuevo';
+              console.error(
+                `Error al eliminar el usuario con id ${user.id_usuario}:`,
+                err
+              );
+              const errorMessage =
+                err.message ||
+                'No se pudo eliminar el usuario. Intente de nuevo';
               this.swalAlertService.showError(errorMessage);
             },
           });

@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ isEditing ? 'Editar Rol' : 'Crear Nuevo Rol' }}</h2>
+<mat-dialog-content [formGroup]="roleForm" class="mat-typography">
+  <mat-form-field class="w-full mb-3">
+    <mat-label>Nombre del Rol</mat-label>
+    <input matInput formControlName="nombre" placeholder="Ej: Administrador">
+    <mat-error *ngIf="roleForm.get('nombre')?.hasError('required') && roleForm.get('nombre')?.touched">
+      El nombre del rol es requerido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="w-full mb-3">
+    <mat-label>Descripción</mat-label>
+    <textarea matInput formControlName="descripcion" placeholder="Ej: Acceso total al sistema" rows="3"></textarea>
+    <mat-error *ngIf="roleForm.get('descripcion')?.hasError('required') && roleForm.get('descripcion')?.touched">
+      La descripción es requerida.
+    </mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="roleForm.invalid">
+    {{ isEditing ? 'Guardar Cambios' : 'Crear Rol' }}
+  </button>
+</mat-dialog-actions>
