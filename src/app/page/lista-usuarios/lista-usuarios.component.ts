@@ -7,7 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,12 +19,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SwalAlertService } from '../../services/swal-alert.service';
 import {
+  DeleteResponse,
   UserService,
   UsuariosData,
 } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
-import { DisplayColumn } from '../../auth/models/response/response.model';
 import { MatProgressSpinner, MatSpinner } from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-lista-usuarios',
@@ -41,7 +42,9 @@ import { MatProgressSpinner, MatSpinner } from '@angular/material/progress-spinn
     MatDialogModule,
     MatOptionModule,
     MatSelectModule,
-    MatProgressSpinner
+    MatProgressSpinner,
+    MatInputModule,
+    ReactiveFormsModule
   ],
   templateUrl: './lista-usuarios.component.html',
   styleUrl: './lista-usuarios.component.css',
@@ -59,6 +62,7 @@ export class ListaUsuariosComponent
   resultLength=0;
   displayColumn: string[]= ['id','nombre','apellido','correo','estado','created_at','updated_at','actions'];
   paginado: number[]= [5,10,20,50];
+  filterControl= new FormControl('');
   constructor(){}
 
 
@@ -71,6 +75,14 @@ export class ListaUsuariosComponent
           this.dataSource.data = data;
           this.isLoadingResults = false;
           this.resultLength = data.length;
+          //filtro dinamico
+          this.dataSource.filter =this.filterControl.value ? this.filterControl.value.trim().toLocaleLowerCase(): '';
+          this.filterControl.valueChanges
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(value=>{
+            this.dataSource.filter = value ? value.trim().toLocaleLowerCase(): '';
+          });
+          this.dataSource.filterPredicate = this.createCustomFilterPredicate();
         },
         error: (err) => {
           console.error('error al cargar Usuarios', err);
@@ -81,12 +93,46 @@ export class ListaUsuariosComponent
       });
   }
 
+
+  createCustomFilterPredicate():(data: UsuariosData, filter:string)=> boolean{
+    return (data:UsuariosData, filter: string): boolean=>{
+      const dataStr= (data.nombre+data.apellido+data.correo+data.estado).toLocaleLowerCase();
+      return dataStr.includes(filter);
+    };
+  }
   abrirUsuarioFormDialog():void{
 
   }
 
-  eliminarUsuario(){
+  eliminarUsuario(usuario: UsuariosData):void{
+        this.swalAlertService.confirmDelete().then((result) => {
+          if (result.isConfirmed) {
+            this.usuarioService
+              .deleteUSer(usuario.id)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response: DeleteResponse) => {
+                  this.swalAlertService.showSuccess(response.message, 'Eliminado!');
+                  this.refreshTable();
+                },
+                error: (err: any) => {
+                  console.error(
+                    `Error al eliminar el usuario con id ${usuario.id}:`,
+                    err
+                  );
+                  const errorMessage =
+                    err.message ||
+                    'No se pudo eliminar el usuario. Intente de nuevo';
+                  this.swalAlertService.showError(errorMessage);
+                },
+              });
+          }
+        });
 
+  }
+
+  refreshTable(){
+    this.obtenerListaUsuarios();
   }
   ngOnInit(): void {
     this.obtenerListaUsuarios();

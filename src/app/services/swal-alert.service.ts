@@ -27,7 +27,7 @@ export class SwalAlertService {
     });
   }
 
-  showError(message: string,title='Eliminado!') {
+  showError(message: string,title='Error!') {
     Swal.fire({
       title: title,
       text: message,

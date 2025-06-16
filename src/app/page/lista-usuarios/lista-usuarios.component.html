@@ -3,7 +3,19 @@
 <div class="p-6">
   <h1 class="text-2xl font-bold mb-4">Lista de Usuarios</h1>
 
-  <div class="flex justify-end mb-4">
+  <div class="flex justify-between items-center mb-4">
+    <!-- Filter Input -->
+    <mat-form-field class="w-2/5 md:w-1/3">
+      <mat-label>Buscar usuario</mat-label>
+      <input matInput [formControl]="filterControl" placeholder="Nombre, Correo, DNI...">
+      <mat-icon matSuffix>search</mat-icon>
+      <!-- Optional clear button -->
+      <button *ngIf="filterControl.value" matSuffix mat-icon-button aria-label="Clear" (click)="filterControl.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- ADD Button -->
     <button mat-raised-button color="primary" (click)="abrirUsuarioFormDialog()">
       <mat-icon>add</mat-icon> Añadir Usuario
     </button>
@@ -61,7 +73,7 @@
           <button mat-icon-button color="primary" (click)="abrirUsuarioFormDialog()" aria-label="Editar usuario">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminarUsuario()" aria-label="Eliminar usuario">
+          <button mat-icon-button color="warn" (click)="eliminarUsuario(user)" aria-label="Eliminar usuario">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
