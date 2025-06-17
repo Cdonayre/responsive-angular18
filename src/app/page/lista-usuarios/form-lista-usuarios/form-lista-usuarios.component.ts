@@ -1,98 +1,69 @@
-import {
-  Component,
-  Inject,
-  inject,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogModule,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
-import {
-  Roles,
-  User,
-  UserService,
-  UsuarioCrear,
-  UsuarioSistemas,
-  UsuarioUpdate,
-} from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, Inject, inject, OnDestroy, OnInit } from '@angular/core';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatDialogModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SwalAlertService } from '../../../services/swal-alert.service';
+import { Roles, User, UserService, UsuarioCrear, UsuarioSistemas, UsuarioUpdate } from '../../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-form-usuario',
+  selector: 'app-form-lista-usuarios',
   standalone: true,
-  imports: [
-    MatDialogModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogTitle,
-    MatSelectModule,
-    MatDialogContent,
-    MatDialogActions,
-    MatIconButton,
-    MatIcon,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    CommonModule,
-  ],
-  templateUrl: './form-usuario.component.html',
-  styleUrl: './form-usuario.component.css',
+  imports: [    MatDialogModule,
+      ReactiveFormsModule,
+      MatButtonModule,
+      MatIconModule,
+      MatDialogTitle,
+      MatSelectModule,
+      MatDialogContent,
+      MatDialogActions,
+      MatIconButton,
+      MatIcon,
+      MatFormFieldModule,
+      MatInputModule,
+      FormsModule,
+      CommonModule,],
+  templateUrl: './form-lista-usuarios.component.html',
+  styleUrl: './form-lista-usuarios.component.css'
 })
-export class FormUsuarioComponent implements OnInit, OnDestroy {
-  private closeDialogRef = inject(MatDialogRef<FormUsuarioComponent>);
-  private fb = inject(FormBuilder);
+export class FormListaUsuariosComponent implements OnInit, OnDestroy {
+
+  private closeDialogRef = inject(MatDialogRef<FormListaUsuariosComponent>);
+  private fb= inject(FormBuilder);
   private swalAlertService = inject(SwalAlertService);
   private usuarioService = inject(UserService);
-//public initialUserData: User | null = inject(MAT_DIALOG_DATA);
   userForm!: FormGroup;
+    public availableRoles: Roles[] = [
+  //Renamed from availableSystems
+      { id: 0, descripcion: 'Ninguno' },
+      { id: 1, descripcion: 'Administrador' },
+      { id: 2, descripcion: 'Supervisor' },
+      { id: 3, descripcion: 'Empleado' },
+    ];
+    isEditMode = false;
+    passwordChanged = false;
+    private destroy$ = new Subject<void>();
+    availableSystem: any;
 
-  public availableRoles: Roles[] = [
-//Renamed from availableSystems
-    { id: 0, descripcion: 'Ninguno' },
-    { id: 1, descripcion: 'Administrador' },
-    { id: 2, descripcion: 'Supervisor' },
-    { id: 3, descripcion: 'Empleado' },
-  ];
+    constructor(@Inject(MAT_DIALOG_DATA) public data: User | null){}
 
-  isEditMode = false;
-  passwordChanged = false;
-  private destroy$ = new Subject<void>();
-  availableSystems: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: User | null) {}
 
   ngOnInit(): void {
     this.isEditMode = !!this.data;
     this.initForm();
   }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  initForm(): void {
+initForm(): void {
 
     const initialRoleId = this.data ? (this.data as any).id_rol : 0;
     this.userForm = this.fb.group({
@@ -264,4 +235,5 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
   onCancel(): void {
     this.closeDialogRef.close(false);
   }
+
 }

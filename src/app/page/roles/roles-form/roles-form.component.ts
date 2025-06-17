@@ -9,7 +9,6 @@ import { Rol, RolData } from '../models/roles.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MessageCardComponent } from '../../../shared/message-card/message-card.component';
 
 @Component({
   selector: 'app-roles-form',

@@ -55,7 +55,7 @@ export class UserService {
       })
       .pipe(
         map((response) => {
-          if (response.status === 'success' && response.code === 200) {
+          if (response.status === 'success' && (response.code === 200 || response.code === 201)) {
             return response.data;
           } else {
             console.error('Error en el API:', response);

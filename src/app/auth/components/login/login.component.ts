@@ -1,15 +1,11 @@
 import {
-  ChangeDetectorRef,
   Component,
-  computed,
-  HostListener,
   inject,
   OnDestroy,
   OnInit,
   signal,
-  ViewChild,
 } from '@angular/core';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import {
@@ -21,26 +17,20 @@ import {
 } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  timer,
   take,
-  takeUntil,
   Subject,
-  Subscription,
   Observable,
 } from 'rxjs';
 import { ROUTE_PATHS } from '../../../global/constants/route.constants';
 import AuthService from '../../services/auth.service';
 import {
-  DataResponse,
   LoginRequest,
   LogiResponse,
 } from '../../models/login.model';
-import { VerifyCodeRequest } from '../../models/verify-code.model';
 import { MessageCardComponent } from '../../../shared/message-card/message-card.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
-import { ResponseSimple } from '../../models/response/response.model';
 import { MatButton } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 
@@ -112,7 +102,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       };
       loginObservable = this.authService.loginAuth(loginRequest);
       loginObservable.pipe(take(1)).subscribe({
-        next: (res) => {
+        next: () => {
           if (this.authService.isAuthenticated()) {
             Swal.fire({
               icon: 'success',
@@ -154,7 +144,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       loginObservable = this.authService.loginUser(loginRequest);
 
       loginObservable.pipe(take(1)).subscribe({
-        next: (res) => {
+        next: () => {
           if (this.authService.isAuthenticated()) {
             Swal.fire({
               icon: 'success',

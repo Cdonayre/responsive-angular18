@@ -20,12 +20,14 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SwalAlertService } from '../../services/swal-alert.service';
 import {
   DeleteResponse,
+  User,
   UserService,
   UsuariosData,
 } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { MatProgressSpinner, MatSpinner } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
+import { FormUsuarioComponent } from '../usuario/form-usuario/form-usuario.component';
 
 @Component({
   selector: 'app-lista-usuarios',
@@ -67,6 +69,7 @@ export class ListaUsuariosComponent
 
 
   obtenerListaUsuarios(): void {
+    this.isLoadingResults=true;
     this.usuarioService
       .getListaUsuarios()
       .pipe(takeUntil(this.destroy$))
@@ -77,11 +80,6 @@ export class ListaUsuariosComponent
           this.resultLength = data.length;
           //filtro dinamico
           this.dataSource.filter =this.filterControl.value ? this.filterControl.value.trim().toLocaleLowerCase(): '';
-          this.filterControl.valueChanges
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(value=>{
-            this.dataSource.filter = value ? value.trim().toLocaleLowerCase(): '';
-          });
           this.dataSource.filterPredicate = this.createCustomFilterPredicate();
         },
         error: (err) => {
@@ -100,9 +98,20 @@ export class ListaUsuariosComponent
       return dataStr.includes(filter);
     };
   }
-  abrirUsuarioFormDialog():void{
-
-  }
+    openDialog(user: User | null) {
+      const dialogref = this.dialog.open(FormUsuarioComponent, {
+        data: user,
+      });
+      dialogref
+        .afterClosed()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((dialogResult) => {
+          console.log(`Se ha cerrado. resultado ${dialogResult}`);
+          if (dialogResult == true) {
+            this.refreshTable();
+          }
+        });
+    }
 
   eliminarUsuario(usuario: UsuariosData):void{
         this.swalAlertService.confirmDelete().then((result) => {
@@ -124,6 +133,7 @@ export class ListaUsuariosComponent
                     err.message ||
                     'No se pudo eliminar el usuario. Intente de nuevo';
                   this.swalAlertService.showError(errorMessage);
+                  this.refreshTable();
                 },
               });
           }
@@ -136,6 +146,11 @@ export class ListaUsuariosComponent
   }
   ngOnInit(): void {
     this.obtenerListaUsuarios();
+    this.filterControl.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(value=>{
+      this.dataSource.filter = value ? value.trim().toLocaleLowerCase() : '';
+    });
   }
   ngOnDestroy(): void {
     this.destroy$.next();

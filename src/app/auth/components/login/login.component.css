@@ -51,3 +51,7 @@
 .text-cumplimiento{
   text-align: justify;
 }
+
+.btn-login.mat-mdc-raised-button[disabled] {
+   @apply !bg-gray-400 !text-gray-700;
+}

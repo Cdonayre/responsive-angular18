@@ -6,9 +6,10 @@ import RisComponent from '../../page/ris/ris.component';
 import DistritosComponent from '../../page/distritos/distritos.component';
 import CategoriasComponent from '../../page/categorias/categorias.component';
 import UsuarioComponent from '../../page/usuario/usuario.component';
-import  RolesComponent  from '../../page/roles/roles.component';
+import RolesComponent from '../../page/roles/roles.component';
 import { ListaUsuariosComponent } from '../../page/lista-usuarios/lista-usuarios.component';
-
+import { SistemasService } from '../../services/sistemas.service';
+import SistemasComponent from '../../page/sistemas/sistemas.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -19,78 +20,93 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'init',
         component: DashboardComponent,
-        data: { breadcrumb: 'dashboard',
-          label:'Dashboard',
-          icon:'dashboard',
-          visibleToUserTypes: ['admin_dashboard_user']
+        data: {
+          breadcrumb: 'dashboard',
+          label: 'Dashboard',
+          icon: 'dashboard',
+          visibleToUserTypes: ['admin_dashboard_user'],
         },
       },
       {
         path: 'establecimientos',
         component: EstablecimientosComponent,
-        data: { breadcrumb: 'Establecimientos',
-          label:'Establecimientos',
-          icon:'store',
-          visibleToUserTypes: ['admin_dashboard_user']
-         },
+        data: {
+          breadcrumb: 'Establecimientos',
+          label: 'Establecimientos',
+          icon: 'store',
+          visibleToUserTypes: ['admin_dashboard_user'],
+        },
       },
       {
-        path:'RIS',
+        path: 'RIS',
         component: RisComponent,
-        data: { breadcrumb: 'RIS',
-          label:'RIS',
-          icon:'local_hospital',
-          visibleToUserTypes: ['admin_dashboard_user']
-         },
+        data: {
+          breadcrumb: 'RIS',
+          label: 'RIS',
+          icon: 'local_hospital',
+          visibleToUserTypes: ['admin_dashboard_user'],
+        },
       },
       {
-        path:'Distitos',
+        path: 'Distitos',
         component: DistritosComponent,
-        data: { breadcrumb: 'Distritos',
-          label:'Distritos',
-          icon:'location_on',
-          visibleToUserTypes: ['admin_dashboard_user']
-         },
+        data: {
+          breadcrumb: 'Distritos',
+          label: 'Distritos',
+          icon: 'location_on',
+          visibleToUserTypes: ['admin_dashboard_user'],
+        },
       },
       {
-        path:'Categorías',
+        path: 'Categorías',
         component: CategoriasComponent,
-        data: { breadcrumb: 'Categorías',
-          label:'Categorías',
-          icon:'category',
-          visibleToUserTypes: ['admin_dashboard_user']
-         },
+        data: {
+          breadcrumb: 'Categorías',
+          label: 'Categorías',
+          icon: 'category',
+          visibleToUserTypes: ['admin_dashboard_user'],
+        },
       },
       {
-        path:'Usuarios',
+        path: 'Usuarios',
         component: UsuarioComponent,
-        data: { breadcrumb: 'Usuario',
-          label:'Usuarios',
-          icon:'user',
-          visibleToUserTypes: ['regular_api_user']
-         },
+        data: {
+          breadcrumb: 'Usuario',
+          label: 'Usuarios',
+          icon: 'user',
+          visibleToUserTypes: ['regular_api_user'],
+        },
       },
       {
-        path:'Roles',
+        path: 'Roles',
         component: RolesComponent,
         data: {
           breadcrumb: 'Roles',
-          label:'Roles',
-          icon:'role',
-          visibleToUserTypes: ['regular_api_user']
+          label: 'Roles',
+          icon: 'role',
+          visibleToUserTypes: ['regular_api_user'],
         },
       },
-            {
-        path:'Lista Usuarios',
+      {
+        path: 'Lista Usuarios',
         component: ListaUsuariosComponent,
         data: {
           breadcrumb: 'Lista-usuarios',
-          label:'Lista Usuarios',
-          icon:'user',
-          visibleToUserTypes: ['regular_api_user']
+          label: 'Lista Usuarios',
+          icon: 'user',
+          visibleToUserTypes: ['regular_api_user'],
         },
       },
-
+      {
+        path: 'Sistemas',
+        component: SistemasComponent,
+        data: {
+          breadcrumb: 'Sistemas',
+          label: 'Sistemas',
+          icon: 'system',
+          visibleToUserTypes: ['regular_api_user'],
+        },
+      },
     ],
   },
   { path: '', redirectTo: 'main/init', pathMatch: 'full' },

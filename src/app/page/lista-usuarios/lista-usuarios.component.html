@@ -16,7 +16,7 @@
     </mat-form-field>
 
     <!-- ADD Button -->
-    <button mat-raised-button color="primary" (click)="abrirUsuarioFormDialog()">
+    <button mat-raised-button color="primary" (click)="openDialog(null)">
       <mat-icon>add</mat-icon> Añadir Usuario
     </button>
   </div>
@@ -70,7 +70,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let user">
-          <button mat-icon-button color="primary" (click)="abrirUsuarioFormDialog()" aria-label="Editar usuario">
+          <button mat-icon-button color="primary" (click)="openDialog(user)" aria-label="Editar usuario">
             <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button color="warn" (click)="eliminarUsuario(user)" aria-label="Eliminar usuario">
