@@ -182,7 +182,7 @@ export default class UsuarioComponent
     this.swalAlertService.confirmDelete().then((result) => {
       if (result.isConfirmed) {
         this.usuarioService
-          .deleteUSer(user.id_usuario)
+          .deleteUSer(user.id)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response: DeleteResponse) => {
@@ -191,7 +191,7 @@ export default class UsuarioComponent
             },
             error: (err: any) => {
               console.error(
-                `Error al eliminar el usuario con id ${user.id_usuario}:`,
+                `Error al eliminar el usuario con id ${user.id}:`,
                 err
               );
               const errorMessage =

@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Asignaciones de {{ data.nombre_usuario }}</h2>
+
+<mat-dialog-content>
+  <div *ngIf="data.asignaciones && data.asignaciones.length > 0; else noAssignments">
+    <table mat-table [dataSource]="data.asignaciones" class="mat-elevation-z8 w-full">
+
+      <ng-container matColumnDef="sistema">
+        <th mat-header-cell *matHeaderCellDef> Sistema </th>
+        <td mat-cell *matCellDef="let assignment"> {{ assignment.nombre_sistema }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rol">
+        <th mat-header-cell *matHeaderCellDef> Rol </th>
+        <td mat-cell *matCellDef="let assignment"> {{ assignment.nombre_rol }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <ng-template #noAssignments>
+    <p>No hay asignaciones de sistema/rol para este usuario.</p>
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onClose()">Cerrar</button>
+</mat-dialog-actions>

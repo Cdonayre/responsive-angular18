@@ -10,6 +10,7 @@ import RolesComponent from '../../page/roles/roles.component';
 import { ListaUsuariosComponent } from '../../page/lista-usuarios/lista-usuarios.component';
 import { SistemasService } from '../../services/sistemas.service';
 import SistemasComponent from '../../page/sistemas/sistemas.component';
+import { UsuarioSistemaComponent } from '../../page/usuario-sistema/usuario-sistema.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -103,6 +104,16 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Sistemas',
           label: 'Sistemas',
+          icon: 'system',
+          visibleToUserTypes: ['regular_api_user'],
+        },
+      },
+      {
+        path: 'User-Sistema',
+        component: UsuarioSistemaComponent,
+        data: {
+          breadcrumb: 'User-Sistema',
+          label: 'User-Sistema',
           icon: 'system',
           visibleToUserTypes: ['regular_api_user'],
         },

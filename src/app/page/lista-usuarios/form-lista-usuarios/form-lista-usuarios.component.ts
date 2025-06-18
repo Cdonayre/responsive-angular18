@@ -67,7 +67,7 @@ initForm(): void {
 
     const initialRoleId = this.data ? (this.data as any).id_rol : 0;
     this.userForm = this.fb.group({
-      id_usuario: [this.data ? this.data.id_usuario : null],
+      id_usuario: [this.data ? this.data.id : null],
       dni: [
         {
           value: this.data ? this.data.dni : '',
@@ -104,7 +104,7 @@ initForm(): void {
 
   loadFormDataForEdit(user: UsuarioSistemas): void {
     this.userForm.patchValue({
-      id: user.id_usuario,
+      id: user.id,
       dni: user.dni,
       nombre: user.nombre,
       apellido: user.apellido,

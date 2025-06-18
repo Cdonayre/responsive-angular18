@@ -1,9 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import AuthService from '../auth/services/auth.service';
-
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +31,23 @@ export class UserService {
           }
         })
       );
+  }
+
+  getListaUsuarios2(): Observable<UsuariosData[]> {
+    // Assuming this endpoint returns a BackendApiResponse with data: UsuariosData[]
+    return this.http
+      .get<ApiResponse<UsuariosData[]>>(`${this.urlBase}`, {
+        headers: this.authService.getAuthHeaders(),
+      }) // Adjust endpoint
+      .pipe(map((response) => response.data)); // Extract the data array
+  }
+
+  getUsuarioById(id_usuario: number): Observable<User> {
+    return this.http
+      .get<ApiResponse<User>>(`${this.urlBase}/${id_usuario}`, {
+        headers: this.authService.getAuthHeaders(),
+      })
+      .pipe(map((response) => response.data));
   }
 
   public getListaUsuarios(): Observable<UsuariosData[]> {
@@ -55,7 +75,10 @@ export class UserService {
       })
       .pipe(
         map((response) => {
-          if (response.status === 'success' && (response.code === 200 || response.code === 201)) {
+          if (
+            response.status === 'success' &&
+            (response.code === 200 || response.code === 201)
+          ) {
             return response.data;
           } else {
             console.error('Error en el API:', response);
@@ -71,52 +94,70 @@ export class UserService {
 
   public putUsuario(id: number, usuario: UsuarioUpdate): Observable<User> {
     return this.http
-      .put<User>(`${this.urlBase}/${id}`, usuario, {
+      .put<ApiResponse<User>>(`${this.urlBase}/${id}`, usuario, {
         headers: this.authService.getAuthHeaders(),
       })
       .pipe(
-        map((response: User | ApiResponse<User>) => {
-          if (
-            'status' in response &&
-            response.status === 'success' &&
-            response.code === 200
-          ) {
+        map((response: ApiResponse<User>) => {
+          if (response.status === 'success' && response.code === 200) {
             return response.data;
-          } else if ('id_usuario' in response) {
-            return response;
           } else {
-            console.error(
-              'REspuesta inesperada del API para actualizar: ',
-              response
+            console.error('API error al actualizar usuario:', response);
+            throw new Error(
+              `Error al actualizar usuario: ${
+                response.message || 'Respuesta inesperada del API'
+              }`
             );
-            throw new Error(`Error al actualizar usuario: ${response}`);
           }
         }),
-        catchError((error) => {
-          console.error('Error fetching usuarios ', error);
-          return throwError(() => error);
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al actualizar usuario: ', error);
+          let customErrorMessage = 'Error inesperado al actualizar el usuario.';
+          if (
+            error.error &&
+            typeof error.error === 'object' &&
+            'message' in error.error
+          ) {
+            customErrorMessage = `Error ${error.status}: ${
+              error.statusText || 'Error desconocido'
+            }`;
+          } else if (error.status) {
+            customErrorMessage = `Error ${error.status}: ${
+              error.statusText || 'Error desconocido'
+            }`;
+          } else if (error.message) {
+            customErrorMessage = error.message;
+          }
+          return throwError(() => Error(customErrorMessage));
         })
       );
   }
 
   public deleteUSer(id: number): Observable<DeleteResponse> {
     return this.http
-      .delete<DeleteResponse>(`${this.urlBase}${id}`, {
+      .delete<DeleteResponse>(`${this.urlBase}/${id}`, {
         headers: this.authService.getAuthHeaders(),
       })
       .pipe(
-        catchError((error) => {
+        catchError((error: HttpErrorResponse) => {
           console.error(`Error al eliminar el usuario con id: ${id}`, error);
+          let customErrorMessage = 'Error inesperado al eliminar el usuario.';
+
           if (error.status === 404) {
-            return throwError(
-              () => new Error(`El usuario con id ${id} no ha sido encontrado`)
-            );
+            customErrorMessage =
+              error.error?.message ||
+              `El usuario con id ${id} no ha sido encontrado.`;
           } else if (error.status === 401) {
-            return throwError(() => new Error('Token inválido, o ausente'));
+            customErrorMessage =
+              error.error?.message || 'Token inválido o ausente.';
+          } else if (error.status === 500) {
+            customErrorMessage =
+              error.error?.message ||
+              'Error del servidor al eliminar el usuario.';
+          } else if (error.message) {
+            customErrorMessage = error.message;
           }
-          return throwError(
-            () => new Error('Error inesperado al eliminar el usuario')
-          );
+          return throwError(() => new Error(customErrorMessage));
         })
       );
   }
@@ -134,7 +175,7 @@ export interface Usuarios {
 
 export interface UsuarioSistemas {
   dni: string;
-  id_usuario: number;
+  id: number;
   correo: string;
   nombre: string;
   apellido: string;
@@ -166,24 +207,23 @@ export interface PaginatedUserResponse {
 }
 
 export interface UsuarioCrear {
-  id?: number;
   dni: string;
   nombre: string;
   apellido: string;
   nombre_usuario: string;
   correo: string;
   clave: string;
-  sistema_id: number;
+  sistema_id?: number;
 }
 
 export interface Roles {
-  id: number;
+  id: number | null;
   descripcion: string;
 }
 
 export interface User {
+  id: number;
   dni: string;
-  id_usuario: number;
   correo: string;
   nombre: string;
   apellido: string;
@@ -192,10 +232,11 @@ export interface User {
   nombre_sistema: string;
   id_rol: number;
   nombre_rol: string;
+  clave?: string;
 }
 
 export interface UsuarioUpdate {
-  dni?: string;
+  dni: string;
   nombre: string;
   apellido: string;
   nombre_usuario: string;
@@ -205,6 +246,7 @@ export interface UsuarioUpdate {
 export interface ApiResponse<T> {
   status: string;
   code: number;
+  message: string;
   data: T;
 }
 

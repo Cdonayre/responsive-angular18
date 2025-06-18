@@ -118,19 +118,19 @@
 
         <mat-form-field *ngIf="!isEditMode">
           <mat-label>Rol</mat-label>
-          <mat-select formControlName="sistema_id" required>
+          <mat-select formControlName="sistema_id">
             <mat-option *ngFor="let role of availableRoles" [value]="role.id">
               {{ role.descripcion }}
             </mat-option>
           </mat-select>
-          <mat-error
+          <!-- <mat-error
             *ngIf="
               userForm.get('sistema_id')?.hasError('required') &&
               userForm.get('sistema_id')?.touched
             "
           >
             El rol es requerido
-          </mat-error>
+          </mat-error> -->
         </mat-form-field>
 
         <mat-form-field
