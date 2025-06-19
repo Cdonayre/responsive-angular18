@@ -30,7 +30,7 @@ import { RolesFormComponent } from './roles-form/roles-form.component';
     MatPaginatorModule,
     MatButtonModule,
     MatDialogModule,
-    RolesFormComponent
+
   ],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.css',

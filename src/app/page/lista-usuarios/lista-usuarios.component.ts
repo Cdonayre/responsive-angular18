@@ -55,7 +55,7 @@ import { UsuarioSistemaComponent } from '../usuario-sistema/usuario-sistema.comp
     MatProgressSpinner,
     MatInputModule,
     ReactiveFormsModule,
-    UsuarioSistemaComponent
+
   ],
   templateUrl: './lista-usuarios.component.html',
   styleUrl: './lista-usuarios.component.css',
@@ -96,13 +96,11 @@ export class ListaUsuariosComponent
     }
 
     this.usuarioSistemaService.getUserSistemaByUserId(user.id).subscribe({
-      next: (userSistemasData: UserSistemaData) => { // Expect UserAssignmentsData
+      next: (userSistemasData: UserSistemaData) => {
         console.log('Assignments data fetched for user:', user.id, userSistemasData);
-
-        // Open the dialog and pass the entire UserAssignmentsData object
         this.dialog.open(UsuarioSistemaComponent, {
-          width: '600px', // Adjust width as needed
-          data: userSistemasData // Pass the full object
+          width: '600px',
+          data: userSistemasData
         });
       },
       error: (err: HttpErrorResponse) => {
@@ -157,42 +155,12 @@ export class ListaUsuariosComponent
       return dataStr.includes(filter);
     };
   }
-  // openDialog(userDataFromTable: UsuariosData | null) {
-  //   console.log('usuarios data:', userDataFromTable);
-  //   if (userDataFromTable && userDataFromTable.id) {
-  //     // If an 'id' is provided, it's an edit action
-  //     console.log('Fetching full user details for ID:', userDataFromTable.id);
-  //     this.isLoadingResults = true; // Show loading spinner
-  //     this.usuarioService
-  //       .getUsuarioById(userDataFromTable.id) // Use the 'id' from UsuariosData to fetch the full 'User'
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (fullUser: User) => {
-  //           console.log('Full user fetched:', fullUser);
-  //           this.isLoadingResults = false;
-  //           this.openFormDialog(fullUser); // Open dialog with the complete User object
-  //         },
-  //         error: (err) => {
-  //           this.isLoadingResults = false;
-  //           console.error('Error fetching full user for edit:', err);
-  //           this.swalAlertService.showError(
-  //             'Error',
-  //             'No se pudo cargar los detalles completos del usuario para editar.'
-  //           );
-  //         },
-  //       });
-  //   } else {
-  //     // If userDataFromTable is null or has no ID, it's a create action
-  //     console.log('Opening dialog for new user (creation mode).');
-  //     this.openFormDialog(null); // Open dialog with null for new user
-  //   }
-  // }
 
   openDialog(userId: number | null) {
     if (userId) {
       this.isLoadingResults = true;
       this.usuarioService
-        .getUsuarioById(userId) // Use the 'id' from UsuariosData to fetch the full 'User'
+        .getUsuarioById(userId)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (user: User) => {
@@ -212,15 +180,14 @@ export class ListaUsuariosComponent
           },
         });
     } else {
-      // If userDataFromTable is null or has no ID, it's a create action
       console.log('Opening dialog for new user (creation mode).');
-      this.openFormDialog(null); // Open dialog with null for new user
+      this.openFormDialog(null);
     }
   }
 
   openFormDialog(user: User | null): void {
     const dialogref = this.dialog.open(FormUsuarioComponent, {
-      data: user, // Pass the User object (for edit) or null (for create)
+      data: user,
       width: '600px',
       disableClose: true,
     });

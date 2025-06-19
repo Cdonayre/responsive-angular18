@@ -3,12 +3,12 @@
     Añadir
   </button>
 <mat-form-field class="w-full max-w-xs mb-4 rounded-md">
-  <mat-label >Tipo de rol</mat-label>
-  <mat-select [(ngModel)]="rolSeleccionado" (selectionChange)="onRolChange($event)" >
-    @for (rol of roles; track $index) {
-      <mat-option [value]="rol.id">{{rol.descripcion}}</mat-option>
+  <mat-label >Elige el sistema</mat-label>
+  <mat-select [(ngModel)]="sistemaSeleccionado" (selectionChange)="onSistemasChange($event)" >
+    @for (sistema of sistemas; track $index) {
+      <mat-option [value]="sistema.id">{{sistema.descripcion}}</mat-option>
     }
-    
+
   </mat-select>
 </mat-form-field>
 </div>

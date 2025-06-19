@@ -8,8 +8,9 @@ import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SwalAlertService } from '../../../services/swal-alert.service';
-import { Roles, User, UserService, UsuarioCrear, UsuarioSistemas, UsuarioUpdate } from '../../../services/user.service';
+import { Roles, User, UserService, UsuarioCrear, UsuarioUpdate } from '../../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
+import { FormUsuarioComponent } from '../../usuario/form-usuario/form-usuario.component';
 
 @Component({
   selector: 'app-form-lista-usuarios',
@@ -32,66 +33,72 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './form-lista-usuarios.component.css'
 })
 export class FormListaUsuariosComponent implements OnInit, OnDestroy {
-
-  private closeDialogRef = inject(MatDialogRef<FormListaUsuariosComponent>);
-  private fb= inject(FormBuilder);
+private closeDialogRef = inject(MatDialogRef<FormUsuarioComponent>);
+  private fb = inject(FormBuilder);
   private swalAlertService = inject(SwalAlertService);
   private usuarioService = inject(UserService);
   userForm!: FormGroup;
-    public availableRoles: Roles[] = [
-  //Renamed from availableSystems
-      { id: 0, descripcion: 'Ninguno' },
-      { id: 1, descripcion: 'Administrador' },
-      { id: 2, descripcion: 'Supervisor' },
-      { id: 3, descripcion: 'Empleado' },
-    ];
-    isEditMode = false;
-    passwordChanged = false;
-    private destroy$ = new Subject<void>();
-    availableSystem: any;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: User | null){}
+  public availableRoles: Roles[] = [
+    { id: 0, descripcion: 'Ninguno' },
+    { id: 1, descripcion: 'Administrador' },
+    { id: 2, descripcion: 'Supervisor' },
+    { id: 3, descripcion: 'Empleado' },
+  ];
 
+  isEditMode = false;
+  passwordChanged = false;
+  private destroy$ = new Subject<void>();
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: {user:User | null}) {}
 
   ngOnInit(): void {
-    this.isEditMode = !!this.data;
+    this.isEditMode = !!this.data && !!this.data.user;
+        console.log('FormUsuarioComponent: isEditMode =', this.isEditMode);
+    console.log('FormUsuarioComponent: Data received:', this.data);
+    if (this.isEditMode) {
+        console.log('FormUsuarioComponent: User object for patching:', this.data.user);
+        console.log('FormUsuarioComponent: id_usuario in received user:', this.data.user?.id);
+    }
     this.initForm();
+
+    if (this.isEditMode && this.data.user) {
+      this.userForm.patchValue(this.data.user);
+      console.log('FormUsuarioComponent: Form value AFTER patchValue:', this.userForm.getRawValue());
+    }
   }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-initForm(): void {
+  initForm(): void {
+    const userToPatch = this.isEditMode ? this.data.user : null;
 
-    const initialRoleId = this.data ? (this.data as any).id_rol : 0;
+    const initialRoleId = userToPatch ? userToPatch.id_rol : 0;
     this.userForm = this.fb.group({
-      id_usuario: [this.data ? this.data.id : null],
+      id_usuario: [userToPatch ? userToPatch.id : null],
       dni: [
         {
-          value: this.data ? this.data.dni : '',
+          value: userToPatch ? userToPatch.dni : '',
           disabled: this.isEditMode,
         },
         Validators.required,
       ],
-      nombre: [this.data ? this.data.nombre : '', Validators.required],
-      apellido: [this.data ? this.data.apellido : '', Validators.required],
+      nombre: [userToPatch ? userToPatch.nombre : '', Validators.required],
+      apellido: [userToPatch ? userToPatch.apellido : '', Validators.required],
       nombre_usuario: [
-        this.data ? this.data.nombre_usuario : '',
+        userToPatch ? userToPatch.nombre_usuario : '',
         Validators.required,
       ],
       correo: [
-        this.data ? this.data.correo : '',
+        userToPatch ? userToPatch.correo : '',
         [Validators.required, Validators.email],
       ],
       clave: ['', this.isEditMode ? [] : Validators.required],
-      sistema_id: [initialRoleId, Validators.required],
+      sistema_id: [initialRoleId],
     });
-
-    if (!this.isEditMode && initialRoleId === 0) {
-      this.userForm.get('sistema_id')?.setValue(0);
-    }
     if (this.isEditMode) {
       this.userForm
         .get('clave')
@@ -101,55 +108,20 @@ initForm(): void {
         });
     }
   }
-
-  loadFormDataForEdit(user: UsuarioSistemas): void {
-    this.userForm.patchValue({
-      id: user.id,
-      dni: user.dni,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      nombre_usuario: user.nombre_usuario,
-      correo: user.correo,
-    });
-
-    this.userForm.get('dni')?.disable();
-    this.userForm.get('clave')?.setValidators([]); // Eliminar la validación de clave en modo edición
-    this.userForm.get('clave')?.updateValueAndValidity(); // Actualizar la validez del campo clave
-
-    this.userForm.get('clave')?.valueChanges.subscribe((value) => {
-      this.passwordChanged = !!value;
-    });
-  }
-
   closeDialog() {
     this.closeDialogRef.close();
   }
 
   addOrEdit(): void {
-    if (this.isEditMode && this.userForm.get('dni')?.disabled) {
-      this.userForm.get('dni')?.enable();
-    }
-
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
-
-      if (
-        this.isEditMode &&
-        this.userForm.get('dni')?.enabled &&
-        !this.userForm.get('dni')?.disabled
-      ) {
-        this.userForm.get('dni')?.disable();
-      }
       this.swalAlertService.showError(
         'Formulario Incompleto',
         'Por favor, complete todos los campos requeridos.'
       );
-      console.error('Formulario inválido:', this.userForm.errors);
       return;
     }
-
     const rawFormData = this.userForm.getRawValue();
-
     if (this.isEditMode) {
       const userId = rawFormData.id_usuario;
       if (!userId) {
@@ -160,18 +132,16 @@ initForm(): void {
         );
         return;
       }
-
       const formDataForUpdate: UsuarioUpdate = {
         dni: rawFormData.dni,
         nombre: rawFormData.nombre,
         apellido: rawFormData.apellido,
         nombre_usuario: rawFormData.nombre_usuario,
         correo: rawFormData.correo,
-        ...(this.passwordChanged && rawFormData.clave
-          ? { clave: rawFormData.clave }
-          : {}),
       };
-
+       if (this.passwordChanged && rawFormData.clave) {
+        formDataForUpdate.clave = rawFormData.clave;
+      }
       console.log('Se va a actualizar el usuario:', formDataForUpdate);
       this.usuarioService.putUsuario(userId, formDataForUpdate).subscribe({
         next: (response: User) => {
@@ -190,10 +160,6 @@ initForm(): void {
         },
       });
     } else {
-      delete rawFormData.id_usuario;
-
-      const sistemaIdValue = this.userForm.get('sistema_id')?.value;
-      const claveValue = this.userForm.get('clave')?.value;
 
       const formDataForCreate: UsuarioCrear = {
         dni: rawFormData.dni,
@@ -201,17 +167,20 @@ initForm(): void {
         apellido: rawFormData.apellido,
         nombre_usuario: rawFormData.nombre_usuario,
         correo: rawFormData.correo,
-        clave: claveValue,
-        sistema_id: sistemaIdValue,
+        clave: rawFormData.clave,
       };
+
+            if (rawFormData.sistema_id !== 0) {
+        formDataForCreate.sistema_id = rawFormData.sistema_id;
+      }
 
       console.log('Se va a crear el usuario.', formDataForCreate);
       this.usuarioService.postUsuario(formDataForCreate).subscribe({
         next: (response: UsuarioCrear) => {
           console.log('Se ha creado el usuario con exito:', response);
           this.swalAlertService.showSuccess(
-            'Se ha creado el usuario correctamente',
-            'Creación Exitosa'
+            'Creación Exitosa',
+            'Se ha creado el usuario correctamente'
           );
           this.closeDialogRef.close(true);
         },
@@ -221,9 +190,6 @@ initForm(): void {
           this.swalAlertService.showError(errorMessage);
         },
       });
-    }
-    if (this.isEditMode && this.userForm.get('dni')?.enabled) {
-      this.userForm.get('dni')?.disable();
     }
   }
 
@@ -235,5 +201,4 @@ initForm(): void {
   onCancel(): void {
     this.closeDialogRef.close(false);
   }
-
 }

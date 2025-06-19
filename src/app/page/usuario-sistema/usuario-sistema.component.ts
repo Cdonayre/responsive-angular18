@@ -7,7 +7,11 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { UserSistemaData, UserSistemaId, UserSistemaPost } from './models/usuario-sistema.model';
+import {
+  UserSistemaData,
+  UserSistemaId,
+  UserSistemaPost,
+} from './models/usuario-sistema.model';
 import {
   FormBuilder,
   FormGroup,
@@ -47,7 +51,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatProgressSpinner,
     MatOptionModule,
     MatDividerModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './usuario-sistema.component.html',
   styleUrl: './usuario-sistema.component.css',
@@ -74,12 +78,13 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: UserSistemaData
   ) {}
   ngOnInit(): void {
-    this.isCreateMode = !this.data.asignaciones || this.data.asignaciones.length === 0;
+    this.isCreateMode =
+      !this.data.asignaciones || this.data.asignaciones.length === 0;
     if (this.isCreateMode) {
-    this.initForm();
-    this.loadDropdownData();
+      this.initForm();
+      this.loadDropdownData();
     } else {
-       this.isLoading = false;
+      this.isLoading = false;
     }
   }
 
@@ -130,19 +135,28 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
       rol_id: formValue.rol_id,
     };
 
-    this.usuarioSistemaService.postUserSistema(assignmentData)
+    this.usuarioSistemaService
+      .postUserSistema(assignmentData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.isSaving = false;
-          this.swalAlertService.showSuccess('Asignación Creada', 'La asignación de sistema y rol ha sido guardada exitosamente.');
+          this.swalAlertService.showSuccess(
+            'Asignación Creada',
+            'La asignación de sistema y rol ha sido guardada exitosamente.'
+          );
 
           // OPTIONAL: Add the new assignment to the local 'data.asignaciones' array
-          const newUserSistema: UserSistemaId = { // <--- Using UserSistemaId here
-              sistema_id: formValue.sistema_id,
-              nombre_sistema: this.availableSystems.find(s => s.id === formValue.sistema_id)?.nombre || 'Desconocido',
-              rol_id: formValue.rol_id,
-              nombre_rol: this.availableRoles.find(r => r.id === formValue.rol_id)?.nombre || 'Desconocido'
+          const newUserSistema: UserSistemaId = {
+            // <--- Using UserSistemaId here
+            sistema_id: formValue.sistema_id,
+            nombre_sistema:
+              this.availableSystems.find((s) => s.id === formValue.sistema_id)
+                ?.nombre || 'Desconocido',
+            rol_id: formValue.rol_id,
+            nombre_rol:
+              this.availableRoles.find((r) => r.id === formValue.rol_id)
+                ?.nombre || 'Desconocido',
           };
           if (!this.data.asignaciones) {
             this.data.asignaciones = [];
@@ -161,7 +175,7 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
             errorMessage = err.error.message;
           }
           this.swalAlertService.showError('Error al Guardar', errorMessage);
-        }
+        },
       });
   }
   ngOnDestroy(): void {

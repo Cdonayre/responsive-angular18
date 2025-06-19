@@ -37,7 +37,7 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
-        path: 'RIS',
+        path: 'ris',
         component: RisComponent,
         data: {
           breadcrumb: 'RIS',
@@ -47,7 +47,7 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
-        path: 'Distitos',
+        path: 'distitos',
         component: DistritosComponent,
         data: {
           breadcrumb: 'Distritos',
@@ -57,17 +57,17 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
-        path: 'Categorías',
+        path: 'categorías',
         component: CategoriasComponent,
         data: {
-          breadcrumb: 'Categorías',
+          breadcrumb: 'ategorías',
           label: 'Categorías',
           icon: 'category',
           visibleToUserTypes: ['admin_dashboard_user'],
         },
       },
       {
-        path: 'Usuarios',
+        path: 'usuarios',
         component: UsuarioComponent,
         data: {
           breadcrumb: 'Usuario',
@@ -77,7 +77,7 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
-        path: 'Roles',
+        path: 'roles',
         component: RolesComponent,
         data: {
           breadcrumb: 'Roles',
@@ -87,7 +87,7 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
-        path: 'Lista Usuarios',
+        path: 'lista-usuarios',
         component: ListaUsuariosComponent,
         data: {
           breadcrumb: 'Lista-usuarios',
@@ -97,7 +97,7 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
-        path: 'Sistemas',
+        path: 'sistemas',
         component: SistemasComponent,
         data: {
           breadcrumb: 'Sistemas',

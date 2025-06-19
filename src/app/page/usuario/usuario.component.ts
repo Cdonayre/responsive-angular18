@@ -26,12 +26,15 @@ import {
 } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { forkJoin, map, Subject, Subscription, takeUntil } from 'rxjs';
 import { getSpanishPaginatorIntl } from '../../helper/general-function';
 import { FormUsuarioComponent } from './form-usuario/form-usuario.component';
 import { SwalAlertService } from '../../services/swal-alert.service';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { Sistemas } from '../sistemas/models/sistemas.model';
+import { SistemasService } from '../../services/sistemas.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-usuario',
@@ -65,7 +68,10 @@ export default class UsuarioComponent
   private swalAlertService = inject(SwalAlertService);
   private usuarioService = inject(UserService);
   private destroy$ = new Subject<void>();
-  private subscripcion: Subscription = new Subscription();
+  private sistemasService= inject(SistemasService);
+
+  sistemaSeleccionado:number=0;
+  sistemas: Sistemas[]=[];
   rolSeleccionado: number = 0; // 0: admin, 1: usuario normal
   dataSource = new MatTableDataSource<UsuarioSistemas>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -83,7 +89,6 @@ export default class UsuarioComponent
     'apellido',
     'nombre_usuario',
     'correo',
-    'nombre_rol',
     'actions',
   ];
   resultLength = 0;
@@ -109,6 +114,47 @@ export default class UsuarioComponent
       });
   }
 
+  cargarListaSistemas():void{
+    this.isLoadingResults=true;
+    this.sistemasService.getSistemas()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: Sistemas[])=>{
+        this.sistemas =[{id:0, nombre:'ninguno', descripcion:'Selecciona una opción'},
+          ...data]
+        this.isLoadingResults=false;
+        this.cargarUsuariosFiltradosPorSistema();
+        },
+         error: (err: HttpErrorResponse) => {
+        this.isLoadingResults = false;
+        console.error('Error al cargar datos de filtros:', err);
+        this.swalAlertService.showError(
+          'Error de Carga',
+          'No se pudieron cargar los datos de sistemas y roles para los filtros.'
+        );
+      }
+    });
+  }
+  cargarUsuariosFiltradosPorSistema():void{
+    this.isLoadingResults=true;
+    this.usuarioService
+    .getUsuariosSistemas(this.sistemaSeleccionado)
+    .pipe(takeUntil(this.destroy$)
+    ).subscribe({
+      next: (data:User[])=>{
+        this.dataSource.data=data;
+        this.resultLength= data.length;
+        this.isLoadingResults= false;
+        console.log('usuarios cargados. ', this.dataSource);
+      },
+      error: (err)=>{
+        console.error('Error al cargar los usuarios al sistema: ',err);
+        this.isLoadingResults=false;
+        this.dataSource.data= [];
+        this.swalAlertService.showError('Error al cargar el sistema');
+      },
+    });
+  }
   constructor() {}
   loadUsuariosByRol(): void {
     this.isLoadingResults = true;
@@ -139,8 +185,14 @@ export default class UsuarioComponent
     console.log('Rol seleccionado', this.rolSeleccionado);
     this.loadUsuariosByRol();
   }
+
+  onSistemasChange(event: any):void{
+    this.sistemaSeleccionado = event.value;
+    console.log('Sistema seleccionado', this.sistemaSeleccionado);
+    this.cargarUsuariosFiltradosPorSistema();
+  }
   ngOnInit(): void {
-    this.loadUsuariosByRol();
+    this.cargarListaSistemas();
   }
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -152,13 +204,6 @@ export default class UsuarioComponent
       this.dataSource.paginator = this.paginator;
     }
   }
-  // processAndSetDataSource(usuarioData: UsuarioSistemas[]): void {
-  //  this.dataSource.data=usuarioData;
-  //  if (!this.paginator) {
-  //   this.dataSource.paginator = this.paginator;
-  //  }
-  // }
-
   openDialog(user: User | null) {
     const dialogref = this.dialog.open(FormUsuarioComponent, {
       data: user,
@@ -176,6 +221,7 @@ export default class UsuarioComponent
 
   refreshTable() {
     this.loadUsuariosByRol();
+    this.cargarUsuariosFiltradosPorSistema();
   }
 
   eliminarUser(user: User): void {
