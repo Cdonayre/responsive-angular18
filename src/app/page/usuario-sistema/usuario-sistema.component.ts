@@ -1,41 +1,174 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { UserSistemaData } from './models/usuario-sistema.model';
-import { ReactiveFormsModule } from '@angular/forms';
+import { UserSistemaData, UserSistemaId, UserSistemaPost } from './models/usuario-sistema.model';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { Sistemas } from '../sistemas/models/sistemas.model';
+import { UsuarioSistemaService } from '../../services/usuario-sistema.service';
+import { SistemasService } from '../../services/sistemas.service';
+import { RolesService } from '../../services/roles.service';
+import { SwalAlertService } from '../../services/swal-alert.service';
+import { RolData } from '../roles/models/roles.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-usuario-sistema',
   standalone: true,
-  imports: [    CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
     //MatProgressBarModule,
-    MatDialogModule ],
+    MatDialogModule,
+    MatProgressSpinner,
+    MatOptionModule,
+    MatDividerModule,
+    MatSelectModule
+  ],
   templateUrl: './usuario-sistema.component.html',
-  styleUrl: './usuario-sistema.component.css'
+  styleUrl: './usuario-sistema.component.css',
 })
-export class UsuarioSistemaComponent {
+export class UsuarioSistemaComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['sistema', 'rol'];
+  isLoading: boolean = true;
+  isSaving: boolean = false;
+  isCreateMode: boolean = false;
+  showAssignmentForm: boolean = false;
+  assignmentForm!: FormGroup;
+  availableSystems: Sistemas[] = [];
+  availableRoles: RolData[] = [];
+
+  private destroy$ = new Subject<void>();
+  private usuarioSistemaService = inject(UsuarioSistemaService);
+  private sistemasService = inject(SistemasService);
+  private rolesService = inject(RolesService);
+  private fb = inject(FormBuilder);
+  private swalAlertService = inject(SwalAlertService);
+
   constructor(
     public dialogRef: MatDialogRef<UsuarioSistemaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UserSistemaData
-  ){  }
+  ) {}
+  ngOnInit(): void {
+    this.isCreateMode = !this.data.asignaciones || this.data.asignaciones.length === 0;
+    if (this.isCreateMode) {
+    this.initForm();
+    this.loadDropdownData();
+    } else {
+       this.isLoading = false;
+    }
+  }
+
+  initForm(): void {
+    this.assignmentForm = this.fb.group({
+      sistema_id: [null, Validators.required],
+      rol_id: [null, Validators.required],
+    });
+  }
+
+  loadDropdownData(): void {
+    this.isLoading = true;
+    forkJoin({
+      sistemas: this.sistemasService.getSistemas(),
+      roles: this.rolesService.getRoles(),
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (results) => {
+          this.availableSystems = results.sistemas;
+          this.availableRoles = results.roles;
+          this.isLoading = false;
+        },
+        error: (err: HttpErrorResponse) => {
+          this.isLoading = false;
+          console.error('Error loading dropdown data:', err);
+          this.swalAlertService.showError(
+            'Error de Carga',
+            'No se pudieron cargar los sistemas y roles disponibles.'
+          );
+        },
+      });
+  }
+
+  onSave(): void {
+    if (this.assignmentForm.invalid) {
+      this.assignmentForm.markAllAsTouched();
+      this.swalAlertService.showAdvertence('Formulario Inválido');
+      return;
+    }
+
+    this.isSaving = true;
+    const formValue = this.assignmentForm.value;
+
+    const assignmentData: UserSistemaPost = {
+      usuario_id: this.data.usuario_id,
+      sistema_id: formValue.sistema_id,
+      rol_id: formValue.rol_id,
+    };
+
+    this.usuarioSistemaService.postUserSistema(assignmentData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isSaving = false;
+          this.swalAlertService.showSuccess('Asignación Creada', 'La asignación de sistema y rol ha sido guardada exitosamente.');
+
+          // OPTIONAL: Add the new assignment to the local 'data.asignaciones' array
+          const newUserSistema: UserSistemaId = { // <--- Using UserSistemaId here
+              sistema_id: formValue.sistema_id,
+              nombre_sistema: this.availableSystems.find(s => s.id === formValue.sistema_id)?.nombre || 'Desconocido',
+              rol_id: formValue.rol_id,
+              nombre_rol: this.availableRoles.find(r => r.id === formValue.rol_id)?.nombre || 'Desconocido'
+          };
+          if (!this.data.asignaciones) {
+            this.data.asignaciones = [];
+          }
+          this.data.asignaciones.push(newUserSistema);
+
+          this.assignmentForm.reset();
+
+          this.dialogRef.close(true);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.isSaving = false;
+          console.error('Error saving user assignment:', err);
+          let errorMessage = 'Hubo un error al guardar la asignación.';
+          if (err.error && err.error.message) {
+            errorMessage = err.error.message;
+          }
+          this.swalAlertService.showError('Error al Guardar', errorMessage);
+        }
+      });
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   onClose(): void {
     this.dialogRef.close();
   }
-
 }

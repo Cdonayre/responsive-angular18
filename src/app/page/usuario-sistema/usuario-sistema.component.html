@@ -1,7 +1,13 @@
-<h2 mat-dialog-title>Asignaciones de {{ data.nombre_usuario }}</h2>
+<h2 mat-dialog-title>Asignaciones de permisos</h2>
 
 <mat-dialog-content>
-  <div *ngIf="data.asignaciones && data.asignaciones.length > 0; else noAssignments">
+  <div *ngIf="isLoading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+    <p>{{ isCreateMode ? 'Cargando opciones de asignación...' : 'Cargando asignaciones...' }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !isCreateMode">
+    <h3>Asignaciones Actuales:</h3>
     <table mat-table [dataSource]="data.asignaciones" class="mat-elevation-z8 w-full">
 
       <ng-container matColumnDef="sistema">
@@ -18,11 +24,41 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </div>
-  <ng-template #noAssignments>
-    <p>No hay asignaciones de sistema/rol para este usuario.</p>
-  </ng-template>
+
+  <div *ngIf="!isLoading && isCreateMode">
+    <h3>Asignar Nuevo:</h3>
+    <form [formGroup]="assignmentForm" class="assignment-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Sistema</mat-label>
+        <mat-select formControlName="sistema_id">
+          <mat-option *ngFor="let sistema of availableSystems" [value]="sistema.id">
+            {{ sistema.descripcion }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="assignmentForm.get('sistema_id')?.hasError('required') && assignmentForm.get('sistema_id')?.touched">
+          Sistema es requerido.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="rol_id">
+          <mat-option *ngFor="let rol of availableRoles" [value]="rol.id">
+            {{ rol.descripcion }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="assignmentForm.get('rol_id')?.hasError('required') && assignmentForm.get('rol_id')?.touched">
+          Rol es requerido.
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-raised-button (click)="onClose()">Cerrar</button>
+  <button mat-button (click)="onClose()" [disabled]="isSaving">Cerrar</button>
+  <button mat-raised-button color="primary" *ngIf="isCreateMode" (click)="onSave()" [disabled]="assignmentForm.invalid || isSaving">
+    <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+    <span *ngIf="!isSaving">Guardar</span>
+  </button>
 </mat-dialog-actions>

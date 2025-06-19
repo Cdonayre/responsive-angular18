@@ -1,3 +1,5 @@
+import { NgOptimizedImage } from "@angular/common";
+
 export interface UserSistemaGet {
   usuario_id: number;
   nombre_usuario: string;
@@ -18,4 +20,11 @@ export interface UserSistemaData {
   usuario_id: number;
   nombre_usuario: string;
   asignaciones: UserSistemaId[];
+}
+
+export interface UserSistemaPost
+{
+  usuario_id: number;
+  sistema_id: number;
+  rol_id: number;
 }
