@@ -6,7 +6,7 @@ module.exports = {
   },
   important: true,
   content: [
-    "./src/**/*.{html,ts}",
+    "./src/**/*.{html,js}","./public/**/*.{html,js}",
   ],
   theme: {
     extend: {},

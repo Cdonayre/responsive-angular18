@@ -116,36 +116,6 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- <mat-form-field *ngIf="!isEditMode">
-          <mat-label>Rol</mat-label>
-          <mat-select formControlName="sistema_id">
-            <mat-option *ngFor="let role of availableRoles" [value]="role.id">
-              {{ role.descripcion }}
-            </mat-option>
-          </mat-select>
-           <mat-error
-            *ngIf="
-              userForm.get('sistema_id')?.hasError('required') &&
-              userForm.get('sistema_id')?.touched
-            "
-          >
-            El rol es requerido
-          </mat-error>
-        </mat-form-field> -->
-
-        <mat-form-field
-          *ngIf="isEditMode && userForm.get('sistema_id')?.value"
-          class="disabled-field"
-        >
-          <mat-label>Rol Asignado</mat-label>
-          <input
-            matInput
-            [value]="getRoleName(userForm.get('sistema_id')?.value)"
-            readonly
-          />
-          <mat-icon matSuffix fontIcon="badge"></mat-icon>
-        </mat-form-field>
-
         <mat-form-field>
           <mat-label>Clave</mat-label>
           <input

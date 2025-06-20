@@ -6,6 +6,7 @@ import AuthService from '../../auth/services/auth.service';
 import { Subscription } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
 interface SidebarMenuItem {
   path: string;
   label: string;
@@ -15,7 +16,7 @@ interface SidebarMenuItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink,RouterLinkActive, MatListModule,MatIconModule],
+  imports: [CommonModule, RouterLink,RouterLinkActive, MatListModule,MatIconModule,MatSidenavModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
@@ -82,7 +83,7 @@ export class SidebarComponent implements OnInit {
       console.log('Filtered menuItems:', this.menuItems); // Debugging
     } catch (error) {
       console.error('Error loading business routes for sidebar:', error);
-      this.menuItems = []; 
+      this.menuItems = [];
     }
   }
 

@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import {
   DeleteResponse,
-  Roles,
   User,
   UserService,
   UsuarioSistemas,
@@ -26,7 +25,7 @@ import {
 } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { forkJoin, map, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { getSpanishPaginatorIntl } from '../../helper/general-function';
 import { FormUsuarioComponent } from './form-usuario/form-usuario.component';
 import { SwalAlertService } from '../../services/swal-alert.service';
@@ -35,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Sistemas } from '../sistemas/models/sistemas.model';
 import { SistemasService } from '../../services/sistemas.service';
 import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-usuario',
@@ -72,16 +72,9 @@ export default class UsuarioComponent
 
   sistemaSeleccionado:number=0;
   sistemas: Sistemas[]=[];
-  rolSeleccionado: number = 0; // 0: admin, 1: usuario normal
-  dataSource = new MatTableDataSource<UsuarioSistemas>();
+  //rolSeleccionado: number = 0; // 0: admin, 1: usuario normal
+  dataSource = new MatTableDataSource<User>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  public roles: Roles[] = [
-    { id: 0, descripcion: 'Ninguno' },
-    { id: 1, descripcion: 'Administrador' },
-    { id: 2, descripcion: 'Supervisor' },
-    { id: 3, descripcion: 'Empleado' },
-  ];
 
   displayedColumns: string[] = [
     'dni',
@@ -98,7 +91,7 @@ export default class UsuarioComponent
   cargarUsuariosSistemas(): void {
     this.isLoadingResults = true;
     this.usuarioService
-      .getUsuariosSistemas(this.rolSeleccionado)
+      .getUsuariosSistemas(this.sistemaSeleccionado)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: UsuarioSistemas[]) => {
@@ -132,7 +125,9 @@ export default class UsuarioComponent
           'Error de Carga',
           'No se pudieron cargar los datos de sistemas y roles para los filtros.'
         );
-      }
+        this.sistemas = [{ id: 0, nombre: 'Todos', descripcion: 'Error al cargar sistemas' }];
+          this.cargarUsuariosFiltradosPorSistema();
+      },
     });
   }
   cargarUsuariosFiltradosPorSistema():void{
@@ -156,35 +151,7 @@ export default class UsuarioComponent
     });
   }
   constructor() {}
-  loadUsuariosByRol(): void {
-    this.isLoadingResults = true;
-    this.usuarioService
-      .getUsuariosSistemas(this.rolSeleccionado)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: User[]) => {
-          this.dataSource.data = data;
-          this.isLoadingResults = false;
-          if (this.paginator && this.dataSource.paginator) {
-            this.dataSource.paginator = this.paginator;
-          }
-          console.log('Usuarios cargados');
-        },
-        error: (err) => {
-          console.error('error al cargar UsuarioSIstemas: ', err);
-          this.isLoadingResults = false;
-          this.dataSource.data = [];
-          this.swalAlertService.showError(
-            'Error al cargar los usuarios del sistema'
-          );
-        },
-      });
-  }
-  onRolChange(event: any) {
-    this.rolSeleccionado = event.value;
-    console.log('Rol seleccionado', this.rolSeleccionado);
-    this.loadUsuariosByRol();
-  }
+
 
   onSistemasChange(event: any):void{
     this.sistemaSeleccionado = event.value;
@@ -206,7 +173,11 @@ export default class UsuarioComponent
   }
   openDialog(user: User | null) {
     const dialogref = this.dialog.open(FormUsuarioComponent, {
-      data: user,
+      data: {
+        user: user,
+        defaultSistemaId: user=== null? this.sistemaSeleccionado: undefined
+      },
+      width: '600px',
     });
     dialogref
       .afterClosed()
@@ -220,7 +191,6 @@ export default class UsuarioComponent
   }
 
   refreshTable() {
-    this.loadUsuariosByRol();
     this.cargarUsuariosFiltradosPorSistema();
   }
 
