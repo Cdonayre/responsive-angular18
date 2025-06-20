@@ -2,11 +2,12 @@
   <h1 class="text-2xl font-bold mb-4">Gestión de Roles</h1>
 
   <div class="flex justify-end mt-4 mr-4">
-    <button mat-flat-button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+  <button mat-raised-button color="primary"
             (click)="abrirRolFormDialog()">
       <mat-icon>add</mat-icon> Añadir Rol
     </button>
     </div>
+
 
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" class="w-full">

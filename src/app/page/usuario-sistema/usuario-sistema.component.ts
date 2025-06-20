@@ -20,9 +20,6 @@ import {
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { Sistemas } from '../sistemas/models/sistemas.model';
 import { UsuarioSistemaService } from '../../services/usuario-sistema.service';
@@ -46,7 +43,6 @@ import { MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
-    //MatProgressBarModule,
     MatDialogModule,
     MatProgressSpinner,
     MatOptionModule,

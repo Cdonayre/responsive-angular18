@@ -19,16 +19,12 @@
       <div class="form-fields-grid">
         <mat-form-field>
           <mat-label>DNI</mat-label>
-          <input matInput placeholder="DNI" formControlName="dni" required />
+          <input matInput placeholder="dni" formControlName="dni" required />
           <mat-icon matSuffix fontIcon="person"></mat-icon>
-          <mat-error
-            *ngIf="
-              userForm.get('dni')?.hasError('required') &&
-              userForm.get('dni')?.touched
-            "
-          >
-            El DNI es requerido
-          </mat-error>
+          <mat-error *ngIf="userForm.get('dni')?.hasError('required') && userForm.get('dni')?.touched">DNI es requerido</mat-error>
+          <mat-error *ngIf="userForm.get('dni')?.hasError('invalidDni') && userForm.get('dni')?.touched">
+        El DNI debe contener exactamente 8 dígitos numéricos.
+      </mat-error>
         </mat-form-field>
 
         <mat-form-field>

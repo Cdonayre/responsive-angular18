@@ -1,4 +1,3 @@
-import { MessageCardComponent } from './../../shared/message-card/message-card.component';
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -28,7 +27,6 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import {
   MatProgressSpinner,
-  MatSpinner,
 } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { FormUsuarioComponent } from '../usuario/form-usuario/form-usuario.component';
@@ -126,7 +124,6 @@ export class ListaUsuariosComponent
           this.dataSource.data = data;
           this.isLoadingResults = false;
           this.resultLength = data.length;
-          //filtro dinamico
           this.dataSource.filter = this.filterControl.value
             ? this.filterControl.value.trim().toLocaleLowerCase()
             : '';

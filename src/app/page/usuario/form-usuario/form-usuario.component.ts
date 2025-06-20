@@ -23,6 +23,7 @@ import {
 } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -116,6 +117,7 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
           disabled: this.isEditMode,
         },
         Validators.required,
+        FormUsuarioComponent.dniValidator
       ],
       nombre: [userToPatch ? userToPatch.nombre : '', Validators.required],
       apellido: [userToPatch ? userToPatch.apellido : '', Validators.required],
@@ -131,9 +133,6 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
       sistema_id: [initialRoleId],
     });
 
-    // if (!this.isEditMode && initialRoleId === 0) {
-    //   this.userForm.get('sistema_id')?.setValue(0);
-    // }
     if (this.isEditMode) {
       this.userForm
         .get('clave')
@@ -143,25 +142,14 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
         });
     }
   }
-
-  // loadFormDataForEdit(user: UsuarioSistemas): void {
-  //   this.userForm.patchValue({
-  //     id: user.id_usuario,
-  //     dni: user.dni,
-  //     nombre: user.nombre,
-  //     apellido: user.apellido,
-  //     nombre_usuario: user.nombre_usuario,
-  //     correo: user.correo,
-  //   });
-
-  //   this.userForm.get('dni')?.disable();
-  //   this.userForm.get('clave')?.setValidators([]); // Eliminar la validación de clave en modo edición
-  //   this.userForm.get('clave')?.updateValueAndValidity(); // Actualizar la validez del campo clave
-
-  //   this.userForm.get('clave')?.valueChanges.subscribe((value) => {
-  //     this.passwordChanged = !!value;
-  //   });
-  // }
+  static dniValidator(control: AbstractControl): { [key: string]: any } | null {
+    const dni = control.value;
+    const regex = /^[0-9]{8}$/;
+    if (dni && !regex.test(dni)) {
+      return { 'invalidDni': true };
+    }
+    return null;
+  }
 
   closeDialog() {
     this.closeDialogRef.close();
@@ -177,6 +165,7 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
       return;
     }
     const rawFormData = this.userForm.getRawValue();
+    const dniValue = this.userForm.get('dni')?.value;
     if (this.isEditMode) {
       const userId = rawFormData.id_usuario;
       if (!userId) {
@@ -188,7 +177,7 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
         return;
       }
       const formDataForUpdate: UsuarioUpdate = {
-        dni: rawFormData.dni,
+        dni: dniValue,
         nombre: rawFormData.nombre,
         apellido: rawFormData.apellido,
         nombre_usuario: rawFormData.nombre_usuario,
@@ -217,7 +206,7 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
     } else {
 
       const formDataForCreate: UsuarioCrear = {
-        dni: rawFormData.dni,
+        dni: dniValue,
         nombre: rawFormData.nombre,
         apellido: rawFormData.apellido,
         nombre_usuario: rawFormData.nombre_usuario,
