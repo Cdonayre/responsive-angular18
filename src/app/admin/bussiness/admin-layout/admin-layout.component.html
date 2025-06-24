@@ -16,3 +16,34 @@
            <div className="col-span-4 row-span-4 col-start-2 row-start-2"><router-outlet/></div>
 
 </div> -->
+
+<!--
+<mat-sidenav-container class="sidenav-container">
+
+  <mat-sidenav #sidenav
+               [mode]="(isHandset$ | async) ? 'over' : 'side'"
+               [opened]="!(isHandset$ | async)"
+               [fixedInViewport]="true"
+               [fixedTopGap]="64" class="app-sidenav">
+    <app-sidebar [isHandset]="isHandset" [isDesktop]="isDesktop"></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="sidenav-content">
+    <mat-toolbar color="primary" class="app-toolbar">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="sidenav.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <app-header></app-header>
+      </mat-toolbar>
+
+    <main class="content-wrapper">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+
+</mat-sidenav-container> -->

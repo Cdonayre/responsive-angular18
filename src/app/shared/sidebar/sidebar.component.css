@@ -7,3 +7,101 @@
      content */
   background: #eee;
 }
+
+.sidenav-container {
+  height: 100vh; /* Make it take full viewport height */
+  width: 100vw; /* Make it take full viewport width */
+}
+
+/* Styles for the mat-sidenav itself */
+.app-sidenav {
+  /* Default width for desktop when open */
+  width: 256px; /* Equivalent to Tailwind's w-64 (16rem * 16px/rem = 256px) */
+  box-shadow: 3px 0 6px rgba(0, 0, 0, 0.24); /* Add a subtle shadow */
+  background-color: #1a202c; /* blue-900 equivalent */
+  color: white; /* Text color */
+}
+
+/* Dark mode for the sidenav */
+.dark .app-sidenav {
+  background-color: #e0e0e0; /* gray-200 equivalent */
+  color: #1a202c; /* Text color */
+}
+
+/* Fixed toolbar/header */
+.app-toolbar {
+  height: 64px; /* Standard Material toolbar height (top-14 + some padding) */
+  position: fixed; /* Keep toolbar fixed at top */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2; /* Ensure it's above other content */
+}
+
+/* Main content wrapper */
+.sidenav-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  flex-grow: 1; /* Make content take available space */
+  padding: 16px; /* Add some padding to your main content */
+  margin-top: 64px; /* Account for the fixed toolbar height */
+}
+
+/* Responsive adjustments */
+
+/* For desktop screens (md breakpoint and up) */
+/* The mat-sidenav in 'side' mode inherently pushes content.
+   Its width will be what's defined in .app-sidenav. */
+@media (min-width: 960px) { /* Breakpoints.Medium is 960px */
+  /* If you want the "w-14 hover:w-64" behavior on desktop: */
+  .app-sidenav {
+    width: 56px; /* Tailwind's w-14 (3.5rem * 16px/rem = 56px) */
+    transition: width 0.3s ease; /* Add transition for smooth expand/collapse */
+    overflow-x: hidden; /* Hide overflowing text when collapsed */
+  }
+
+  .app-sidenav:hover {
+    width: 256px; /* Expand to w-64 on hover */
+    overflow-x: auto; /* Allow content to be seen when expanded */
+  }
+
+  /* To make the main content move with the expanding sidenav on hover */
+  .mat-sidenav-content {
+    margin-left: 56px; /* Initial margin for collapsed sidenav */
+    transition: margin-left 0.3s ease;
+  }
+
+  .mat-sidenav-container:hover .mat-sidenav-content {
+    margin-left: 256px; /* Margin when sidenav expands on hover */
+  }
+
+  /* When sidenav is permanently opened (e.g., on desktop, as it is by default here),
+     Angular Material applies `transform: translate3d(0, 0, 0);` to move the content.
+     We need to override that or work with it. For the hover effect, it's easier
+     to directly control `margin-left` on `mat-sidenav-content` */
+
+  /* Fix for the Módulos header to only show when expanded, if desired */
+  .app-sidenav .hidden.md\:block {
+    display: none; /* Hide by default in mini state */
+  }
+  .app-sidenav:hover .hidden.md\:block {
+    display: block !important; /* Show on hover */
+  }
+}
+
+/* For mobile screens (less than md breakpoint) */
+@media (max-width: 959.98px) { /* Up to Breakpoints.Small */
+  /* Sidenav is in 'over' mode, so it covers content when open */
+  .app-sidenav {
+    width: 256px; /* Still wide when opened, but 'over' mode hides it when closed */
+  }
+
+  /* Remove any margin-left for content when in 'over' mode */
+  .mat-sidenav-content {
+    margin-left: 0 !important;
+  }
+}

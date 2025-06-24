@@ -4,6 +4,7 @@ import { ROUTE_PATHS } from '../../../global/constants/route.constants';
 import { MatButtonModule } from '@angular/material/button';
 import { FooterComponent } from '../../../shared/footer/footer.component';
 import { LoginComponent } from '../../components/login/login.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-auth-page',
@@ -14,6 +15,7 @@ import { LoginComponent } from '../../components/login/login.component';
     MatButtonModule,
     RouterOutlet,
     RouterModule,
+
   ],
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.css',
