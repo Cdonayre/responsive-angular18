@@ -20,6 +20,7 @@ import {
   take,
   Subject,
   Observable,
+  finalize,
 } from 'rxjs';
 import { ROUTE_PATHS } from '../../../global/constants/route.constants';
 import AuthService from '../../services/auth.service';
@@ -67,6 +68,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   });
   unsubscribe$: Subject<any> = new Subject();
   hide = signal(true);
+  isLoading: boolean = false;
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -87,6 +89,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     let loginRequest: LoginRequest;
     let loginObservable: Observable<LogiResponse>;
 
+    this.isLoading= true;
+
     if (this.tipoLogin === 'main') {
       if (this.formLogin.invalid) {
         this.formLogin.markAllAsTouched();
@@ -94,6 +98,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           'Formulario Inválido',
           'Por favor, ingrese un correo electrónico y contraseña válidos.'
         );
+        this.isLoading=false;
         return;
       }
       loginRequest = {
@@ -135,6 +140,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           'Formulario Inválido',
           'Por favor, ingrese un nombre de usuario y clave válidos.'
         );
+        this.isLoading=false;
         return;
       }
       loginRequest = {
@@ -143,7 +149,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       };
       loginObservable = this.authService.loginUser(loginRequest);
 
-      loginObservable.pipe(take(1)).subscribe({
+      loginObservable.pipe(finalize(()=>{
+        this.isLoading=false
+      })).subscribe({
         next: () => {
           if (this.authService.isAuthenticated()) {
             Swal.fire({

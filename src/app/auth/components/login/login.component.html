@@ -7,12 +7,12 @@
 
     <mat-card-content>
       <div class="flex justify-center mb-6 space-x-4">
-        <button mat-flat-button
+        <!-- <button mat-flat-button
                 [color]="tipoLogin === 'main' ? 'primary' : 'basic'"
                 (click)="switchLoginType('main')"
                 class="flex-1">
           Establecimientos
-        </button>
+        </button> -->
         <button mat-flat-button
                 [color]="tipoLogin === 'user' ? 'primary' : 'basic'"
                 (click)="switchLoginType('user')"
@@ -20,7 +20,7 @@
           Usuario
         </button>
       </div>
-
+<!--
       <form *ngIf="tipoLogin === 'main'" [formGroup]="formLogin" (ngSubmit)="onSubmitFirstStep()">
         <mat-form-field class="w-full mb-4">
           <mat-label>Correo Electrónico</mat-label>
@@ -48,7 +48,7 @@
         <button mat-raised-button color="primary" type="submit" class="w-full py-2 text-lg" [disabled]="formLogin.invalid">
           Iniciar Sesión
         </button>
-      </form>
+      </form> -->
 
       <form *ngIf="tipoLogin === 'user'" [formGroup]="formLoginUser" (ngSubmit)="onSubmitFirstStep()">
         <mat-form-field class="w-full mb-4">
@@ -71,8 +71,8 @@
           </mat-error>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" type="submit" class="w-full py-2 text-lg" [disabled]="formLoginUser.invalid">
-          Iniciar Sesión
+        <button mat-raised-button color="primary" type="submit" class="w-full py-2 text-lg" [disabled]="formLoginUser.invalid || isLoading">
+          {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
         </button>
       </form>
       </mat-card-content>
@@ -81,66 +81,3 @@
     </mat-card-footer>
   </mat-card>
 </div>
-
- <!-- @if(visivilityLogin){
-  <form class="form" [formGroup]="formLogin" (ngSubmit)="login()">
-  <div class="form__text">
-    <div class="container-fluid">
-      <div class="row">
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
-        <h2 class="text-center"><strong>{{titleLogin}}</strong> - {{subTitleLogin}}</h2>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <br>
-  @if(errorMessage()){
-    <app-message-card [message]="errorMessage()"/>
-    <br>
-  }
-
-  <mat-form-field class="form__input" appearance="fill">
-    <mat-label>Usuario</mat-label>
-    <input matInput placeholder="Usuario" type="text" formControlName="email" autocomplete="email">
-     <mat-icon matSuffix>person</mat-icon>
-    @if(formLogin.get('email')?.errors?.['required']){
-      <mat-error>Usuario es requerido</mat-error>
-    }
-
-    @if(formLogin.get('email')?.errors?.['email']){
-      <mat-error>Por favor ingrese un usuario válido</mat-error>
-    }
-  </mat-form-field>
-  <br><br>
-  <mat-form-field class="form__input" appearance="fill">
-    <mat-label>Contraseña</mat-label>
-    <input matInput placeholder="Password"
-    [type]="hide() ? 'password' : 'text'" formControlName="password" autocomplete="new-password">
-    <button
-    mat-icon-button
-    matSuffix
-    (click)="hidePassw($event)"
-
-  >
-    <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
-  </button>
-    @if(formLogin.get('password')?.errors?.['required']){
-      <mat-error>Contraseña es requerido</mat-error>
-    }
-  </mat-form-field>
-
-  <div class="form-actions align-items-center justify-content-center">
-    <button class="form-actions__login" mat-raised-button
-            color="raised"
-            type="submit"
->
-        <mat-icon>login</mat-icon> Iniciar Sesión
-    </button>
-  </div>
-</form>
-}
-
- -->
