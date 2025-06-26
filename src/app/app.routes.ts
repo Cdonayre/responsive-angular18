@@ -15,12 +15,5 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { breadcrumb: 'Inicio' },
     },
-  // {
-  //   path: 'sidebar',
-  //   loadChildren: () =>
-  //     import('./shared/sidebar/sidebar.component').then((m) => m.SidebarComponent),
-  //   canActivate: [authGuard],
-  //   data: { breadcrumb: 'Inicio' },
-  // },
   { path: '**', redirectTo: 'not-found' },
 ];

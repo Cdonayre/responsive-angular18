@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { routes } from '../../app.routes';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import AuthService from '../../auth/services/auth.service';
 import { Subscription } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,15 @@ interface SidebarMenuItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink,RouterLinkActive, MatListModule,MatIconModule,MatSidenavModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    MatListModule,
+    MatIconModule,
+    MatSidenavModule,
+    RouterModule
+  ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
@@ -25,6 +33,8 @@ export class SidebarComponent implements OnInit {
   private router = inject(Router);
   private subscriptions: Subscription = new Subscription();
   public menuItems: SidebarMenuItem[] = [];
+  @Input() isHandset!: boolean;
+  @Input() isDesktop!: boolean;
   constructor() {}
   ngOnInit(): void {
     this.buildMenuItems();
@@ -39,7 +49,7 @@ export class SidebarComponent implements OnInit {
     this.subscriptions.unsubscribe();
   }
 
-    private async buildMenuItems(): Promise<void> {
+  private async buildMenuItems(): Promise<void> {
     const currentUserType = this.authService.currentUserValue?.userType;
     if (!currentUserType) {
       this.menuItems = [];
@@ -93,7 +103,7 @@ export class SidebarComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-       console.error('Logout error:', err);
+        console.error('Logout error:', err);
         this.router.navigate(['/login']);
       },
     });

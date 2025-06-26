@@ -17,9 +17,10 @@ import { AuthUser, AuthUserTokenPayload } from '../models/auth-user.model';
 export default class AuthService {
 
   private readonly http = inject(HttpClient);
-  private readonly storageEncrypt = inject(StorageEncryptService); 
+  private readonly storageEncrypt = inject(StorageEncryptService);
   private auth_token = 'authentication_value';
   private readonly tokenKey = STORAGE_KEYS.TOKEN;
+  private userRoles: string[] = ['admin_dashboard_user'];
 
   private currentUserSubject: BehaviorSubject<AuthUser | null>;
   public  currentUser: Observable<AuthUser | null>;
@@ -79,7 +80,7 @@ export default class AuthService {
       }
     }
     return null;
-  } 
+  }
 
   public isAuthenticated(): boolean {
     const authUser = this.currentUserSubject.value;
@@ -114,7 +115,7 @@ export default class AuthService {
 
   public loginUser(req:LoginRequest):Observable<LogiResponse>{
     console.log(environment.apiGatewayUrl);
-   
+
     return this.http
     .post<LogiResponse>(`${environment.apiGatewayUrl}/auth/login`, req)
     .pipe(
@@ -203,9 +204,16 @@ public getAuthHeaders(): HttpHeaders {
             return throwError(() => error);
           })
         );
-        
+
   }
 
+  getCurrentUserRoles(): string[] {
+  return this.userRoles;
+  }
+
+   setUserRoles(roles: string[]): void {
+      this.userRoles = roles;
+  }
 
 
   //***************************begin second auth service **************************//
@@ -280,7 +288,7 @@ public getAuthHeaders(): HttpHeaders {
 //**********************begin firs auth service ***************//
   // httpClient = inject(HttpClient);
   // baseURL='https://app.dirislimanorte.gob.pe:8080/api';
-  
+
   // login(data: any): Observable<any>{
   //   return new Observable(observer => {
   //     return this.httpClient.post(`${this.baseURL}/auth/login`, data).subscribe({
@@ -294,14 +302,14 @@ public getAuthHeaders(): HttpHeaders {
   //         observer.complete();
   //       }
   //     })
-  
+
   //   })
   // }
-  
+
   // logout(){
   //   localStorage.removeItem('authUser');
   // }
-  
+
   // isLoggedIn(){
   //   return localStorage.getItem('authUser') !== null;
   // }
