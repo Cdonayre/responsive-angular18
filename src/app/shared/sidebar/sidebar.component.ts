@@ -33,6 +33,7 @@ export class SidebarComponent implements OnInit {
   private router = inject(Router);
   private subscriptions: Subscription = new Subscription();
   public menuItems: SidebarMenuItem[] = [];
+  public sidebarOpen = false;
   @Input() isHandset!: boolean;
   @Input() isDesktop!: boolean;
   constructor() {}
@@ -53,6 +54,7 @@ export class SidebarComponent implements OnInit {
     const currentUserType = this.authService.currentUserValue?.userType;
     if (!currentUserType) {
       this.menuItems = [];
+      console.log(JSON.stringify(this.menuItems[0], null, 2));
       return;
     }
     const extractRoutesForSidebar = (

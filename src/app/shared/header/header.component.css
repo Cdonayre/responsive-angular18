@@ -114,5 +114,12 @@
   @media only screen and (min-width: 768px) {
       .header-right {
           width: calc(100% - 16rem);
-      }        
+      }
   }
+
+  li {
+  list-style: none;
+}
+li > button::marker {
+  display: none;
+}

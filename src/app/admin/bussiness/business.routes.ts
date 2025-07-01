@@ -22,7 +22,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'dashboard',
           label: 'Dashboard',
-          icon: 'dashboard',
+          icon: 'menu',
           visibleToUserTypes: ['admin_dashboard_user'],
         },
       },
@@ -32,7 +32,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Establecimientos',
           label: 'Establecimientos',
-          icon: 'store',
+          icon: 'medication',
           visibleToUserTypes: ['admin_dashboard_user'],
         },
       },
@@ -42,7 +42,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'RIS',
           label: 'RIS',
-          icon: 'local_hospital',
+          icon: 'domain',
           visibleToUserTypes: ['admin_dashboard_user'],
         },
       },
@@ -52,7 +52,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Distritos',
           label: 'Distritos',
-          icon: 'location_on',
+          icon: 'explore',
           visibleToUserTypes: ['admin_dashboard_user'],
         },
       },
@@ -72,7 +72,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Usuario',
           label: 'Usuarios',
-          icon: 'user',
+          icon: 'person',
           visibleToUserTypes: ['regular_api_user'],
         },
       },
@@ -82,7 +82,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Roles',
           label: 'Roles',
-          icon: 'role',
+          icon: 'group_remove',
           visibleToUserTypes: ['regular_api_user'],
         },
       },
@@ -92,7 +92,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Lista-usuarios',
           label: 'Lista Usuarios',
-          icon: 'user',
+          icon: 'groups',
           visibleToUserTypes: ['regular_api_user'],
         },
       },
@@ -102,7 +102,7 @@ export const ADMIN_ROUTES: Routes = [
         data: {
           breadcrumb: 'Sistemas',
           label: 'Sistemas',
-          icon: 'system',
+          icon: 'settings',
           visibleToUserTypes: ['regular_api_user'],
         },
       },
