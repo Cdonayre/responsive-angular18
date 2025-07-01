@@ -85,17 +85,15 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isEditMode = !!this.data && !!this.data.user;
-        console.log('FormUsuarioComponent: isEditMode =', this.isEditMode);
-    console.log('FormUsuarioComponent: Data received:', this.data);
-    if (this.isEditMode) {
-        console.log('FormUsuarioComponent: User object for patching:', this.data.user);
-        console.log('FormUsuarioComponent: id_usuario in received user:', this.data.user?.id);
-    }
+    // if (this.isEditMode) {
+    //     console.log('FormUsuarioComponent: User object for patching:', this.data.user);
+    //     console.log('FormUsuarioComponent: id_usuario in received user:', this.data.user?.id);
+    // }
     this.initForm();
 
     if (this.isEditMode && this.data.user) {
       this.userForm.patchValue(this.data.user);
-      console.log('FormUsuarioComponent: Form value AFTER patchValue:', this.userForm.getRawValue());
+      // console.log('FormUsuarioComponent: Form value AFTER patchValue:', this.userForm.getRawValue());
     }
   }
 
@@ -186,10 +184,8 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
        if (this.passwordChanged && rawFormData.clave) {
         formDataForUpdate.clave = rawFormData.clave;
       }
-      console.log('Se va a actualizar el usuario:', formDataForUpdate);
       this.usuarioService.putUsuario(userId, formDataForUpdate).subscribe({
         next: (response: User) => {
-          console.log('Usuario actualizado con éxito:', response);
           this.swalAlertService.showSuccess(
             'Se ha actualizado el usuario correctamente',
             'Actualización Exitosa'
@@ -217,11 +213,8 @@ export class FormUsuarioComponent implements OnInit, OnDestroy {
             if (rawFormData.sistema_id !== 0) {
         formDataForCreate.sistema_id = rawFormData.sistema_id;
       }
-
-      console.log('Se va a crear el usuario.', formDataForCreate);
       this.usuarioService.postUsuario(formDataForCreate).subscribe({
         next: (response: UsuarioCrear) => {
-          console.log('Se ha creado el usuario con exito:', response);
           this.swalAlertService.showSuccess(
             'Creación Exitosa',
             'Se ha creado el usuario correctamente'

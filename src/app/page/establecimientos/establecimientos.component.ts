@@ -21,7 +21,7 @@ interface EstablecimientoDisplay extends EstablecimientosEdit {
 @Component({
   selector: 'app-establecimientos',
   standalone: true,
-  imports: [CommonModule, MatSlideToggleModule,MatTableModule,MatPaginatorModule,MatPaginator, 
+  imports: [CommonModule, MatSlideToggleModule,MatTableModule,MatPaginatorModule,MatPaginator,
     FormsModule,MatButtonModule, MatDividerModule, MatIconModule,MatDialogModule,FormEstablecimientosComponent],
   templateUrl: './establecimientos.component.html',
   styleUrl: './establecimientos.component.css'
@@ -35,7 +35,7 @@ export default class EstablecimientosComponent implements OnInit, AfterViewInit,
   //private router = inject(Router);
   establecimientos: EstablecimientosEdit[] = [];
 
-  establecimiento:EstablecimientosEdit = 
+  establecimiento:EstablecimientosEdit =
   {
     id:0,
     departamento_id:0,
@@ -47,12 +47,12 @@ export default class EstablecimientosComponent implements OnInit, AfterViewInit,
     nombre:''
   };
 
-  // nuevoEstablecimiento:Partial<EstablecimientosEdit>= {codigo:'', nombre:''}  
-  
+  // nuevoEstablecimiento:Partial<EstablecimientosEdit>= {codigo:'', nombre:''}
+
   displayedColumns: string []=['numero','codigo', 'risNombre','nombre','actions'];
   establecimientoDataSource = new MatTableDataSource<EstablecimientoDisplay>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  
+
   //establecimientoCreado: any;
   private risMap: Map<number, string>= new Map();
   private destroy$ = new Subject<void>();
@@ -94,29 +94,13 @@ loadInitalData():void{
 processAndSetDataSource(establecimientosData:EstablecimientosEdit[]):void{
   const displayData: EstablecimientoDisplay[] = establecimientosData.map(est => ({
     ...est,
-    risNombre: this.risMap.get(est.ris_id) || 'N/A' 
+    risNombre: this.risMap.get(est.ris_id) || 'N/A'
   }) );
     this.establecimientos=establecimientosData;
     this.establecimientoDataSource = new MatTableDataSource<EstablecimientoDisplay>(displayData);
     this.establecimientoDataSource.paginator = this.paginator;
-  }   
+  }
 
-  // postEstablecimiento(establecimientosData:EstablecimientosEdit){
-  //   this.establecimientoService.postEstablecimiento(establecimientosData).subscribe({
-  //     next:(establecimientoCreado:EstablecimientosEdit)=>{
-  //       Swal.fire({
-  //         title:"Creado!",
-  //         text:"El registro ha sido creado",
-  //         icon:"success"
-  //       });
-  //       this.refreshTable();
-  //     },
-  //     error:(err)=>{
-  //       console.error('Error al crear el establecimiento:', err);
-  //       Swal.fire('Error', 'No se pudo crear el registro', 'error');
-  //     }
-  //   });
-  // }
 
 
 eliminarEstablecimiento(establecimiento: EstablecimientosEdit) {

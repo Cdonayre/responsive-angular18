@@ -90,7 +90,6 @@ export class SidebarComponent implements OnInit {
       this.menuItems = allPossibleMenuItems.filter((item) =>
         item.visibleToUserTypes.includes(currentUserType)
       );
-      console.log('Filtered menuItems:', this.menuItems); // Debugging
     } catch (error) {
       console.error('Error loading business routes for sidebar:', error);
       this.menuItems = [];

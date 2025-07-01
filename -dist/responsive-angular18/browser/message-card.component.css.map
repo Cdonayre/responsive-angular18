@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/shared/message-card/message-card.component.css"],
-  "sourcesContent": ["\r\n.message-error {\r\n  background-color: red;\r\n  color: white;\r\n  font-size: 12px;\r\n}"],
-  "mappings": ";AACA,CAAC;AACC,oBAAkB;AAClB,SAAO;AACP,aAAW;AACb;",
-  "names": []
-}

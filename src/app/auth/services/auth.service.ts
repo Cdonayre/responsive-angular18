@@ -114,7 +114,7 @@ export default class AuthService {
   }
 
   public loginUser(req:LoginRequest):Observable<LogiResponse>{
-    console.log(environment.apiGatewayUrl);
+
 
     return this.http
     .post<LogiResponse>(`${environment.apiGatewayUrl}/auth/login`, req)

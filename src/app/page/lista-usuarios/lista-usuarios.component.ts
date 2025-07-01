@@ -95,8 +95,7 @@ export class ListaUsuariosComponent
 
     this.usuarioSistemaService.getUserSistemaByUserId(user.id).subscribe({
       next: (userSistemasData: UserSistemaData) => {
-        console.log('Assignments data fetched for user:', user.id, userSistemasData);
-        this.dialog.open(UsuarioSistemaComponent, {
+this.dialog.open(UsuarioSistemaComponent, {
           width: '600px',
           data: userSistemasData
         });
@@ -192,7 +191,6 @@ export class ListaUsuariosComponent
       .afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe((dialogResult) => {
-        console.log(`Se ha cerrado. resultado ${dialogResult}`);
         if (dialogResult == true) {
           this.refreshTable();
         }

@@ -97,7 +97,6 @@ export default class UsuarioComponent
         next: (data: UsuarioSistemas[]) => {
           this.dataSource.data = data;
           this.isLoadingResults = false;
-          console.log('cargando UsuarioSistemas', this.dataSource);
         },
         error: (err) => {
           console.error('error al cargar UsuarioSIstemas: ', err);
@@ -140,7 +139,6 @@ export default class UsuarioComponent
         this.dataSource.data=data;
         this.resultLength= data.length;
         this.isLoadingResults= false;
-        console.log('usuarios cargados. ', this.dataSource);
       },
       error: (err)=>{
         console.error('Error al cargar los usuarios al sistema: ',err);
@@ -155,7 +153,6 @@ export default class UsuarioComponent
 
   onSistemasChange(event: any):void{
     this.sistemaSeleccionado = event.value;
-    console.log('Sistema seleccionado', this.sistemaSeleccionado);
     this.cargarUsuariosFiltradosPorSistema();
   }
   ngOnInit(): void {
@@ -183,7 +180,6 @@ export default class UsuarioComponent
       .afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe((dialogResult) => {
-        console.log(`Se ha cerrado. resultado ${dialogResult}`);
         if (dialogResult == true) {
           this.refreshTable();
         }

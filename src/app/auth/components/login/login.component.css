@@ -1,31 +1,35 @@
-
-
+/* Converted from .form SCSS block */
 .form {
   width: 70%;
   position: absolute;
   top: 15%;
   left: 15%;
-
-  .form-actions__input {
-    width: 100%;
-  }
-  .form-actions__text {
-    display: flex;
-    justify-content: center;
-  }
-  .form-actions__img {
-    width: 100%;
-    height: 70px;
-  }
 }
 
-.formSecond{
-  @extend .form;
-  top: 3%;
-  width: 90%;
-  left: 5%;
+.form .form-actions__input {
+  width: 100%;
 }
 
+.form .form-actions__text {
+  display: flex;
+  justify-content: center;
+}
+
+.form .form-actions__img {
+  width: 100%;
+  height: 70px;
+}
+
+/* Converted from .formSecond SCSS block using @extend .form */
+/* It inherits properties from .form and then overrides 'top', 'width', and 'left' */
+.formSecond {
+  position: absolute; /* Inherited from .form */
+  width: 90%; /* Overrides width from .form */
+  top: 3%; /* Overrides top from .form */
+  left: 5%; /* Overrides left from .form */
+}
+
+/* Original CSS (no SCSS conversion needed) */
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -48,10 +52,14 @@
   color: blue;
 }
 
-.text-cumplimiento{
+.text-cumplimiento {
   text-align: justify;
 }
 
+/* This is a Tailwind CSS @apply directive. */
+/* It's not standard CSS and requires Tailwind's build process to resolve. */
+/* If you are removing Tailwind, you would replace this with explicit CSS properties */
+/* for !important background and text colors. */
 .btn-login.mat-mdc-raised-button[disabled] {
-   @apply !bg-gray-400 !text-gray-700;
+  @apply !bg-gray-400 !text-white;
 }

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/page/usuario-sistema/usuario-sistema.component.css"],
-  "sourcesContent": [" .spinner-container {\r\n    display: flex;\r\n    flex-direction: column;\r\n    align-items: center;\r\n    justify-content: center;\r\n    min-height: 100px;\r\n  }\r\n  .assignment-form {\r\n    display: flex;\r\n    flex-direction: column;\r\n    gap: 16px;\r\n    padding: 10px 0;\r\n  }\r\n  .w-full {\r\n    width: 100%;\r\n  }\r\n  /* Removed .toggle-form-button as it's no longer needed */\r\n  mat-spinner {\r\n    margin-right: 8px; /* Space between spinner and text */\r\n  }\r\n  mat-dialog-actions button {\r\n    display: flex;\r\n    align-items: center;\r\n  }\r\n"],
-  "mappings": ";AAAC,CAAC;AACE,WAAS;AACT,kBAAgB;AAChB,eAAa;AACb,mBAAiB;AACjB,cAAY;AACd;AACA,CAAC;AACC,WAAS;AACT,kBAAgB;AAChB,OAAK;AACL,WAAS,KAAK;AAChB;AACA,CAAC;AACC,SAAO;AACT;AAEA;AACE,gBAAc;AAChB;AACA,mBAAmB;AACjB,WAAS;AACT,eAAa;AACf;",
-  "names": []
-}
