@@ -105,3 +105,14 @@
     margin-left: 0 !important;
   }
 }
+
+
+
+.active-link {
+  background-color: #e0e0e0; /* light gray */
+  color: #000000 !important; /* black text */
+}
+
+.active-link mat-icon {
+  color: fffffff !important;
+}

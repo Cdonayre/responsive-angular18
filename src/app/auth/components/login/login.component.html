@@ -19,12 +19,12 @@
     <mat-card class="w-full max-w-md p-8 shadow-xl rounded-lg bg-gray-800">
     <mat-card-content>
       <div class="flex justify-center mb-6 space-x-4">
-        <!-- <button mat-flat-button
+        <button mat-flat-button
                 [color]="tipoLogin === 'main' ? 'primary' : 'basic'"
                 (click)="switchLoginType('main')"
                 class="flex-1">
           Establecimientos
-        </button> -->
+        </button>
         <button
           mat-flat-button
           [color]="tipoLogin === 'user' ? 'primary' : 'basic'"
@@ -34,7 +34,7 @@
           Usuario
         </button>
       </div>
-      <!--
+
       <form *ngIf="tipoLogin === 'main'" [formGroup]="formLogin" (ngSubmit)="onSubmitFirstStep()">
         <mat-form-field class="w-full mb-4">
           <mat-label>Correo Electrónico</mat-label>
@@ -62,7 +62,7 @@
         <button mat-raised-button color="primary" type="submit" class="w-full py-2 text-lg" [disabled]="formLogin.invalid">
           Iniciar Sesión
         </button>
-      </form> -->
+      </form>
       <form
         *ngIf="tipoLogin === 'user'"
         [formGroup]="formLoginUser"

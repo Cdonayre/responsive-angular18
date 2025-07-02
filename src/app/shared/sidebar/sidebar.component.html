@@ -32,7 +32,7 @@
 </button>
 
 <div
-  class="sidebar-container fixed flex flex-col top-14 left-0 w-14 md:w-64 hover:w-64 bg-sky-800 h-full text-white transition-all duration-300 border-none z-10"
+  class="sidebar-container fixed flex flex-col top-14 left-0 w-14 md:w-64 hover:w-64 bg-sky-400 h-full text-white transition-all duration-300 border-none z-10"
   [ngClass]="{
     'w-14': !sidebarOpen,
     'w-64': sidebarOpen,
@@ -63,57 +63,19 @@
         mat-list-item
         class="relative flex items-center h-11 focus:outline-none hover:bg-gray-100 text-black border-l-4 border-transparent pr-6 overflow-hidden"
         [routerLink]="[item.path]"
-        routerLinkActive="bg-gray-100 text-black border-sky-500"
+        [routerLinkActive]="['active-link']"
         [routerLinkActiveOptions]="{ exact: false }"
       >
         <span class="inline-flex justify-center items-center ml-4">
           <mat-icon>{{ item.icon }}</mat-icon>
         </span>
         <span
-          class="ml-2 text-sm tracking-wide truncate text-white hover:text-black whitespace-nowrap"
+          class="ml-2 text-sm tracking-wide truncate text-black hover:text-black whitespace-nowrap"
           >{{ item.label }}</span
         >
       </a>
       }
-      <!-- <a
-        mat-list-item
-        (click)="onLogout()"
-        class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-300 text-white border-l-4 border-transparent hover:border-gray-500 pr-6"
-      >
-        <span class="inline-flex justify-center items-center ml-4">
-          <mat-icon>exit_to_app</mat-icon>
-        </span>
-        <span class="ml-2 text-sm tracking-wide truncate">Cerrar Sesión</span>
-      </a> -->
+
     </mat-nav-list>
   </div>
 </div>
-
-<!-- <mat-nav-list class="flex-grow p-0">
-      @for(item of menuItems; track $index) {
-      <a
-        mat-list-item
-        class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-100 hover:text-sky-800  text-black border-l-4 border-transparent hover:border-gray-500 pr-6"
-        [routerLink]="[item.path]"
-        routerLinkActive="bg-gray-300 text-black"
-        [routerLinkActiveOptions]="{ exact: false }"
-      >
-        <span class="inline-flex justify-center items-center ml-4">
-          <mat-icon>{{ item.icon }}</mat-icon>
-        </span>
-        <span class="ml-2 text-sm tracking-wide truncate text-white hover:text-black">{{
-          item.label
-        }}</span>
-      </a>
-      }
-      <a
-        mat-list-item
-        (click)="onLogout()"
-        class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-300 text-white border-l-4 border-transparent hover:border-gray-500 pr-6"
-      >
-        <span class="inline-flex justify-center items-center ml-4">
-          <mat-icon>exit_to_app</mat-icon>
-        </span>
-        <span class="ml-2 text-sm tracking-wide truncate">Cerrar Sesión</span>
-      </a>
-    </mat-nav-list> -->
