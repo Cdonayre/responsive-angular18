@@ -21,7 +21,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
-import { Sistemas } from '../sistemas/models/sistemas.model';
+import { Sistemas, Sistema } from '../sistemas/models/sistemas.model';
 import { UsuarioSistemaService } from '../../services/usuario-sistema.service';
 import { SistemasService } from '../../services/sistemas.service';
 import { RolesService } from '../../services/roles.service';
@@ -57,9 +57,11 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   isSaving: boolean = false;
   isCreateMode: boolean = false;
+  isAddingNewAssignmentMode: boolean = false;
   showAssignmentForm: boolean = false;
   assignmentForm!: FormGroup;
   availableSystems: Sistemas[] = [];
+  filteredAvailableSystems : Sistemas[]=[];
   availableRoles: RolData[] = [];
 
   private destroy$ = new Subject<void>();
@@ -76,11 +78,12 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isCreateMode =
       !this.data.asignaciones || this.data.asignaciones.length === 0;
-    if (this.isCreateMode) {
       this.initForm();
+      if (this.isCreateMode) {
+      this.isAddingNewAssignmentMode= true;
       this.loadDropdownData();
     } else {
-      this.isLoading = false;
+      this.loadDropdownData();
     }
   }
 
@@ -115,6 +118,26 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
       });
   }
 
+  applySystemFilter():void{
+    if (this.availableSystems && this.data.asignaciones){
+      const assignedSystemIds = new Set(this.data.asignaciones.map(a => a.sistema_id));
+      this.filteredAvailableSystems = this.availableSystems.filter(
+        sistema => sistema.id != undefined && !assignedSystemIds.has(sistema.id)
+      );
+    } else{
+      this.filteredAvailableSystems = [...this.availableSystems]
+    }
+  }
+
+  onAddNewAssignment(): void{
+    this.isAddingNewAssignmentMode=true;
+    this.assignmentForm.reset();
+    Object.keys(this.assignmentForm.controls).forEach(key =>{
+      this.assignmentForm.get(key)?.markAsUntouched();
+      this.assignmentForm.get(key)?.updateValueAndValidity();
+    });
+  }
+
   onSave(): void {
     if (this.assignmentForm.invalid) {
       this.assignmentForm.markAllAsTouched();
@@ -142,9 +165,13 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
             'La asignación de sistema y rol ha sido guardada exitosamente.'
           );
 
+          const selectedSistema = this.availableSystems.find(s => s.id === formValue.sistema_id);
+          const selectedRol = this.availableRoles.find(r => r.id === formValue.rol_id);
+
           // OPTIONAL: Add the new assignment to the local 'data.asignaciones' array
           const newUserSistema: UserSistemaId = {
             // <--- Using UserSistemaId here
+
             sistema_id: formValue.sistema_id,
             nombre_sistema:
               this.availableSystems.find((s) => s.id === formValue.sistema_id)
@@ -160,8 +187,10 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
           this.data.asignaciones.push(newUserSistema);
 
           this.assignmentForm.reset();
+          this.isAddingNewAssignmentMode = false;
 
-          this.dialogRef.close(true);
+          this.applySystemFilter();
+          //this.dialogRef.close(true);
         },
         error: (err: HttpErrorResponse) => {
           this.isSaving = false;

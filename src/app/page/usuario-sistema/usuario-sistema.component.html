@@ -23,9 +23,15 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+        <div class="mt-4 text-center">
+      <button mat-raised-button color="accent" (click)="onAddNewAssignment()">
+        <mat-icon>add</mat-icon> Añadir Nueva Asignación
+      </button>
+    </div>
   </div>
 
-  <div *ngIf="!isLoading && isCreateMode">
+  <div *ngIf="!isLoading && (isCreateMode || isAddingNewAssignmentMode)">
+    <h3 *ngIf="isAddingNewAssignmentMode" class="mt-4">Añadir Nueva Asignación:</h3>
     <form [formGroup]="assignmentForm" class="assignment-form">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Sistema</mat-label>
@@ -56,7 +62,7 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onClose()" [disabled]="isSaving">Cerrar</button>
-  <button mat-raised-button color="primary" *ngIf="isCreateMode" (click)="onSave()" [disabled]="assignmentForm.invalid || isSaving">
+  <button mat-raised-button color="primary" *ngIf="isCreateMode || isAddingNewAssignmentMode" (click)="onSave()" [disabled]="assignmentForm.invalid || isSaving">
     <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
     <span *ngIf="!isSaving">Guardar</span>
   </button>
