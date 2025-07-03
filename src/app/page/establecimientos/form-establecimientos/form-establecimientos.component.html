@@ -1,7 +1,7 @@
 <div class="container form-container">
-    <div mat-dialog-actions> 
+    <div mat-dialog-actions>
         <button mat-icon-button class="close-button" aria-label="Close form" (click)="closeDialog()">
-            <mat-icon class="close-icon" >close</mat-icon>
+            <mat-icon class="close-icon text-black hover:text-red-500 hover:rounded-sm" >close</mat-icon>
         </button>
     </div>
     <div mat-dialog-title>Formulario</div>
@@ -10,7 +10,7 @@
             <mat-label>Departamento ID</mat-label>
             <mat-icon fontIcon="person" matSuffix></mat-icon>
             <mat-select placeholder="Departamento" [(ngModel)]="establecimientoData.departamento_id" class="form-input">
-           <!-- <input matInput placeholder="Id" [(ngModel)]="establecimientoData.departamento_id" class="form-input"> -->         
+           <!-- <input matInput placeholder="Id" [(ngModel)]="establecimientoData.departamento_id" class="form-input"> -->
                    <mat-option value="1">Lima</mat-option>
             </mat-select>
         </mat-form-field>
@@ -47,7 +47,7 @@
                 @if(categoria.id != 1){
                     {{categoria.nombre}}
                 }
-            </mat-option>   
+            </mat-option>
             </mat-select>
         </mat-form-field>
         <br>
@@ -64,8 +64,8 @@
         </mat-form-field>
     </div>
     <div mat-dialog-actions class="button-container">
-        <button (click)="addOrEdit(establecimientoData)" mat-flat-button mat-dialog-close="establecimientoData" class="rounded-full py-2 px-4 bg-green-500 hover:bg-green-300">Guardar</button>
+        <button (click)="addOrEdit(establecimientoData)" mat-flat-button mat-dialog-close="establecimientoData" class="rounded-full text-white py-2 px-4 bg-green-500 hover:bg-green-400">Guardar</button>
         <br>
-        <button mat-flat-button mat-dialog-close="establecimientoData" class="rounded-full py-2 px-4 bg-red-600 hover:bg-red-400">cancelar</button>
+        <button mat-flat-button mat-dialog-close="establecimientoData" class="rounded-full text-white py-2 px-4 bg-red-500 hover:bg-red-400">cancelar</button>
     </div>
 </div>

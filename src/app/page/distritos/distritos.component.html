@@ -4,30 +4,34 @@
     <div class="w-full overflow-x-auto">
       <table class="w-full">
         <thead>
-          <tr class="text-xs font-semibold tracking-wide text-left uppercase border-b border-gray-700 text-gray-400 bg-gray-800">
+          <tr
+            class="text-lg font-semibold tracking-wide text-center uppercase border-b border-gray-700 text-black bg-gray-400"
+          >
             <th class="p-4 w-1/4">ID</th>
             <th class="p-4 w-1/4">RIS</th>
             <th class="p-4 w-1/4">Fecha creación</th>
             <th class="p-4 w-1/4">Fecha actualización</th>
           </tr>
         </thead>
-        <tbody class=" divide-y divide-gray-700 bg-gray-800">
+        <tbody class="divide-y divide-gray-700 bg-gray-400">
           @for(distrito of distritos; track $index){
-          <tr class="bg-gray-800 hover:bg-gray-900 text-gray-400">
+          <tr class="bg-gray-400 hover:bg-gray-700 text-black hover:text-gray-400">
             <td class="px-4 py-3">
-                  <p class="font-semibold">{{distrito.id}}</p>
+              <p class="font-semibold">{{ distrito.id }}</p>
             </td>
             <td class="px-4 py-3">
-              <p class="font-semibold">{{distrito.nombre}}</p>
+              <p class="font-semibold">{{ distrito.nombre }}</p>
             </td>
             <td class="px-4 py-3">
-              <p class="font-semibold">{{distrito.created_at}}</p>
-           </td>
-          <td class="px-4 py-3">
-              <p class="font-semibold">{{distrito.updated_at}}</p>
-          </td>
+              <p class="font-semibold">{{ distrito.created_at }}</p>
+            </td>
+            <td class="px-4 py-3">
+              <p class="font-semibold">{{ distrito.updated_at }}</p>
+            </td>
           </tr>
-        }
+          }
         </tbody>
       </table>
     </div>
+  </div>
+</div>

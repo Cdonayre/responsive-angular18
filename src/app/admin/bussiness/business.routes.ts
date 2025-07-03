@@ -19,12 +19,12 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'init',
         component: DashboardComponent,
-        data: {
-          breadcrumb: 'dashboard',
-          label: 'Dashboard',
-          icon: 'menu',
-          visibleToUserTypes: ['admin_dashboard_user'],
-        },
+        // data: {
+        //   breadcrumb: 'dashboard',
+        //   label: 'Dashboard',
+        //   icon: 'menu',
+        //   visibleToUserTypes: ['admin_dashboard_user'],
+        // },
       },
       {
         path: 'establecimientos',
