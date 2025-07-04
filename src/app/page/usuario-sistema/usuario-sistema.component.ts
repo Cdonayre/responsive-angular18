@@ -53,7 +53,7 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './usuario-sistema.component.css',
 })
 export class UsuarioSistemaComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['sistema', 'rol'];
+  displayedColumns: string[] = ['sistema', 'rol','actions' ];
   isLoading: boolean = true;
   isSaving: boolean = false;
   isCreateMode: boolean = false;
@@ -145,8 +145,23 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isSaving = true;
+
     const formValue = this.assignmentForm.value;
+    const newSistemaId = formValue.sistema_id;
+    const newRolId = formValue.rol_id;
+
+    const alreadyExistsLocally = this.data.asignaciones.some(assignment =>
+      assignment.sistema_id === newSistemaId && assignment.rol_id === newRolId
+    );
+
+    if (alreadyExistsLocally) {
+      this.swalAlertService.showError(
+        'Asignación Duplicada'
+      );
+      return; // Stop the function here, preventing the API call
+    }
+
+    this.isSaving = true;
 
     const assignmentData: UserSistemaPost = {
       usuario_id: this.data.usuario_id,
@@ -168,6 +183,7 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
           const selectedSistema = this.availableSystems.find(s => s.id === formValue.sistema_id);
           const selectedRol = this.availableRoles.find(r => r.id === formValue.rol_id);
 
+
           // OPTIONAL: Add the new assignment to the local 'data.asignaciones' array
           const newUserSistema: UserSistemaId = {
             // <--- Using UserSistemaId here
@@ -182,12 +198,13 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
                 ?.nombre || 'Desconocido',
           };
           if (!this.data.asignaciones) {
-            this.data.asignaciones = [];
+            this.data.asignaciones = [...this.data.asignaciones, newUserSistema];
           }
           this.data.asignaciones.push(newUserSistema);
 
           this.assignmentForm.reset();
           this.isAddingNewAssignmentMode = false;
+
 
           this.applySystemFilter();
           //this.dialogRef.close(true);
@@ -195,13 +212,18 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
         error: (err: HttpErrorResponse) => {
           this.isSaving = false;
           console.error('Error saving user assignment:', err);
-          let errorMessage = 'Hubo un error al guardar la asignación.';
-          if (err.error && err.error.message) {
-            errorMessage = err.error.message;
+          let alertTitle = 'Error al guardar';
+          let alertMessage = 'Erro al guardar';
+          if(err.status == 409){
+            alertTitle='Acceso duplicado';
+            alertMessage='El usuario ya tiene estos accesos para este sistema.';
+          } else if (err.error && typeof err.error === 'object' && err.error.message) {
+            alertMessage = err.error.message;
           }
-          this.swalAlertService.showError('Error al Guardar', errorMessage);
+         this.swalAlertService.showError(alertTitle, alertMessage);
         },
       });
+      this.onClose();
   }
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -209,5 +231,42 @@ export class UsuarioSistemaComponent implements OnInit, OnDestroy {
   }
   onClose(): void {
     this.dialogRef.close();
+  }
+
+  eliminarPermiso(assignment: UserSistemaId){
+    this.swalAlertService.confirmDelete().then((result) => {
+
+      if (result.isConfirmed) {
+        this.isSaving = true;
+        this.usuarioSistemaService.deleteUserSistema(
+          this.data.usuario_id!,
+          assignment.sistema_id!
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () =>{
+            this.isSaving=false;
+            this.swalAlertService.showSuccess(
+              'Asignación Eliminada',
+              `El acceso ${assignment.nombre_sistema} ha sido eliminado del usuario.`
+            );
+            this.data.asignaciones = this.data.asignaciones.filter(
+              item => item.sistema_id != assignment.sistema_id
+            );
+            this.applySystemFilter();
+          },
+          error: (err: Error) =>{
+            this.isSaving = false;
+            console.error('Error al borrar el permiso seleccionado', err);
+
+            let alertTitle = 'Error al eliminar';
+            let alertMessage = err.message || 'Ocurrió un error inesperado';
+
+            this.swalAlertService.showError(alertTitle, alertMessage);
+          }
+        });
+      }
+      this.onClose();
+    });
   }
 }

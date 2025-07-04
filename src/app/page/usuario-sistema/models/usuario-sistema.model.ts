@@ -28,3 +28,7 @@ export interface UserSistemaPost
   sistema_id: number;
   rol_id: number;
 }
+
+export interface UserSistemaDelete {
+  message: string;
+}

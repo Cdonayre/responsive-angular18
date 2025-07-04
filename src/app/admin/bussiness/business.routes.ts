@@ -71,8 +71,18 @@ export const ADMIN_ROUTES: Routes = [
         component: UsuarioComponent,
         data: {
           breadcrumb: 'Usuario',
-          label: 'Usuarios',
+          label: 'Usuarios por Sistema',
           icon: 'person',
+          visibleToUserTypes: ['regular_api_user'],
+        },
+      },
+      {
+        path: 'lista-usuarios',
+        component: ListaUsuariosComponent,
+        data: {
+          breadcrumb: 'Lista-usuarios',
+          label: 'Usuarios Globales',
+          icon: 'groups',
           visibleToUserTypes: ['regular_api_user'],
         },
       },
@@ -83,16 +93,6 @@ export const ADMIN_ROUTES: Routes = [
           breadcrumb: 'Roles',
           label: 'Roles',
           icon: 'group_remove',
-          visibleToUserTypes: ['regular_api_user'],
-        },
-      },
-      {
-        path: 'lista-usuarios',
-        component: ListaUsuariosComponent,
-        data: {
-          breadcrumb: 'Lista-usuarios',
-          label: 'Lista Usuarios',
-          icon: 'groups',
           visibleToUserTypes: ['regular_api_user'],
         },
       },
