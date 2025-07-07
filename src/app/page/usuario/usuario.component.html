@@ -18,11 +18,11 @@
   </div>
 
   <!-- <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 py-3"></div> -->
-  <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource">
+  <div class="mat-elevation-z8 overflow-auto">
+    <table mat-table [dataSource]="dataSource" class="w-full">
       <ng-container matColumnDef="dni">
-        <th mat-header-cell *matHeaderCellDef>DNI</th>
-        <td mat-cell *matCellDef="let user">{{ user.dni }}</td>
+        <th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">DNI</th>
+        <td mat-cell *matCellDef="let user" class="hidden sm:table-cell">{{ user.dni }}</td>
       </ng-container>
 
       <ng-container matColumnDef="nombre">
@@ -36,13 +36,13 @@
       </ng-container>
 
       <ng-container matColumnDef="nombre_usuario">
-        <th mat-header-cell *matHeaderCellDef>Nombre de Usuario</th>
-        <td mat-cell *matCellDef="let user">{{ user.nombre_usuario }}</td>
+        <th mat-header-cell *matHeaderCellDef class="hidden lg:table-cell">Nombre de Usuario</th>
+        <td mat-cell *matCellDef="let user" class="hidden lg:table-cell">{{ user.nombre_usuario }}</td>
       </ng-container>
 
       <ng-container matColumnDef="correo">
-        <th mat-header-cell *matHeaderCellDef>Correo</th>
-        <td mat-cell *matCellDef="let user">{{ user.correo }}</td>
+        <th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Correo</th>
+        <td mat-cell *matCellDef="let user" class="hidden md:table-cell">{{ user.correo }}</td>
       </ng-container>
 
       <ng-container matColumnDef="nombre_rol">
